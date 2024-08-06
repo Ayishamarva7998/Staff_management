@@ -7,6 +7,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { createMeeting, getallstaffs, setAuthToken } from '../../utils/api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Meeting = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,6 +84,7 @@ const Meeting = () => {
       setStaffList([]);
     }
   };
+  const nav=useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');

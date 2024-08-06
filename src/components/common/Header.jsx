@@ -1,63 +1,54 @@
 import { useState } from 'react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { IoSettings } from 'react-icons/io5';
+import { Menu } from '@headlessui/react'; // Import Headless UI Menu components
 
-const navigation = [
-  { name: 'Home', href: '#' },
-  { name: 'About', href: '#' },
-  { name: 'Services', href: '#' },
-  { name: 'Contact', href: '#' },
+const menuOptions = [
+  { name: 'Your Profile', href: '#'  },
+  { name: 'Settings', href: '#' },
+  { name: 'Sign out', href: '#', action: () => { 
+    // Clear local storage and redirect
+    localStorage.clear(); 
+    window.location.href = '/'; 
+  }}
 ];
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <header className="bg-white text-dark-gray shadow-md">
       <nav className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          {/* Mobile menu button */}
-          {/* <div className="sm:hidden">
-            <button
-              type="button"
-              className="bg-light-gray p-2 rounded-md text-dark-gray hover:bg-dark-gray hover:text-white"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-              ) : (
-                <Bars3Icon className="w-6 h-6" aria-hidden="true" />
-              )}
-            </button>
-          </div> */}
-          {/* Desktop navigation */}
-          {/* <div className="hidden sm:flex sm:space-x-4">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-dark-gray hover:bg-light-gray hover:text-dark-gray px-3 py-2 rounded-md text-sm font-medium"
-              >
-                {item.name}
-              </a>
-            ))}
-          </div> */}
+          <div className="flex-1" />
+
+          <Menu as="div" className="relative ml-3">
+            <div>
+              <Menu.Button className="relative flex rounded-full text-sm">
+                <span className="sr-only">Open menu</span>
+                <IoSettings size={25} className="text-dark-gray" />
+              </Menu.Button>
+            </div>
+            <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
+              {menuOptions.map((option) => (
+                <Menu.Item key={option.name}>
+                  {({ active }) => (
+                    <a
+                      href={option.href}
+                      onClick={(e) => {
+                        e.preventDefault(); // Prevent the default link behavior
+                        if (option.action) {
+                          option.action(); // Call the action if it exists
+                        }
+                      }}
+                      className={`block px-4 py-2 text-sm ${active ? 'bg-gray-100' : 'text-gray-700'}`}
+                    >
+                      {option.name}
+                    </a>
+                  )}
+                </Menu.Item>
+              ))}
+            </Menu.Items>
+          </Menu>
         </div>
       </nav>
-      {/* Mobile menu */}
-      {/* <div className={`${isOpen ? 'block' : 'hidden'} sm:hidden`}>
-        <div className="space-y-1 px-2 pt-2 pb-3">
-          {navigation.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="text-dark-gray hover:bg-light-gray hover:text-dark-gray block px-3 py-2 rounded-md text-base font-medium"
-            >
-              {item.name}
-            </a>
-          ))}
-        </div>
-      </div> */}
     </header>
   );
 }

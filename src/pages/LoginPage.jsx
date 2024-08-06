@@ -6,37 +6,37 @@ import toast from 'react-hot-toast';
 import { login, setAuthToken } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
-
 const validationSchema = Yup.object({
   email: Yup.string()
     .email('Invalid email address')
-    .required('Required'),
+    .required('Email is required'),
   password: Yup.string()
     .min(6, 'Password must be at least 6 characters')
-    .required('Required'),
+    .required('Password is required'),
   position: Yup.string()
-    .oneOf(['admin', 'staff'], 'Invalid position')
-    .required('Required'),
+    .oneOf(['admin', 'advisor', 'reviewer'], 'Invalid position')
+    .required('Position is required'),
 });
 
 const LoginPage = () => {
-  const nav=useNavigate();
+  const navigate = useNavigate();
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await login( {
+      const response = await login({
         email: values.email,
         password: values.password,
         role: values.position
       });
-      const token =response.data.token;     
+      const token = response.data.token;
       localStorage.setItem('token', token);
-      setAuthToken(token);     
+      setAuthToken(token);
       console.log('Login successful:', response.data);
-      toast.success('Login successful')
-      nav('/admin/inbox')
+      toast.success('Login successful');
+      navigate('/admin/inbox');
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
-      toast.error(error?.response?.data?.message || 'Login filed')
+      toast.error(error?.response?.data?.message || 'Login failed');
     } finally {
       setSubmitting(false);
     }
@@ -87,7 +87,8 @@ const LoginPage = () => {
                   <Field as="select" name="position" className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm">
                     <option value="" label="Select position" />
                     <option value="admin" label="Admin" />
-                    <option value="staff" label="Staff" />
+                    <option value="advisor" label="Advisor" />
+                    <option value="reviewer" label="Reviewer" />
                   </Field>
                   <ErrorMessage name="position" component="div" className="text-red-500 text-sm" />
                 </div>

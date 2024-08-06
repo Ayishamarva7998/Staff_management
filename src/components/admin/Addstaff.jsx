@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { addStaff, setAuthToken } from '../../utils/api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AddStaff = () => {
   const [role, setRole] = useState('');
@@ -68,7 +69,7 @@ const AddStaff = () => {
       setSubmitting(false);
     }
   };
-
+  const nav=useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {

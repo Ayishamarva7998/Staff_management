@@ -1,17 +1,23 @@
 import { useState } from "react";
-import Header from "./Header";
 import { Link, useParams } from "react-router-dom";
-import Advisor from "../admin/Advisors";
-import Reviewer from "../admin/Reviewer";
-import Addstaff from "../admin/Addstaff";
-import { Datas } from "./SidebarData";
-import Meetings from "../admin/Meetings";
-import Inbox from "../admin/Inbox";
+import Header from "../components/common/Header";
+import Inbox from "../components/advisor/Inbox";
+import { IoMdMail } from "react-icons/io";
+import { SiGooglemeet } from "react-icons/si";
 
-const Sidebar = () => {
+
+const Advisor = () => {
+    const { rout } = useParams();
+    
   const [open, setOpen] = useState(true);
+  const iconSize = 24;
 
-  const { rout } = useParams();
+  const Datas= [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
+    { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting",gap:true },
+    { title: "Schedule Review", icon: <SiGooglemeet size={iconSize} />, url: "schedule-review" },
+  ];
+
 
 
   return (
@@ -58,7 +64,7 @@ const Sidebar = () => {
         </div>
         <ul className="pt-6">
           {Datas.map((data, index) => (
-            <Link key={index} to={`/admin/${data.url}`}>
+            <Link key={index} to={`/advisor/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -78,8 +84,9 @@ const Sidebar = () => {
         </ul>
       </div>
       <div className="h-screen flex-1">
-        <Header  />
-        {rout === "advisors" ? (
+        <Header/>
+        <Inbox/>
+        {/* {rout === "advisors" ? (
           <Advisor />
         ) : rout === "reviewers" ? (
           <Reviewer />
@@ -89,11 +96,11 @@ const Sidebar = () => {
           <Meetings/>
         ): rout=== 'inbox' ?(
           <Inbox/>
-        ):''}
+        ):''} */}
         
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default Advisor;
