@@ -1,10 +1,12 @@
-
+import Approuter from "./routes/Approuter"
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
 
   return (
  <>
-<div className="wfull bg-green-100 h-[100vh]"></div>
+<Approuter/>
+<Toaster/>
  </>
   )
 }
