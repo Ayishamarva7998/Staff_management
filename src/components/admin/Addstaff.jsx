@@ -57,8 +57,9 @@ const AddStaff = () => {
         role: values.role,
         batch: values.batch,
         stack: values.stack,
-        reviewCash: values.reviewCash,
+        hire: values.reviewCash,
       });
+
       toast.success('Staff added successfully')
       resetForm();
     } catch (error) {
