@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { setAuthToken, viewReviewers,updateStaff,deletestaff } from '../../utils/api';
+import { setAuthToken, viewReviewers, updateStaff, deletestaff } from '../../utils/api';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,9 +19,8 @@ const Reviewer = () => {
     email: '',
     phone: '',
     stack: '',
-    reviewCash: '',
-    totalReview: '',
-   
+    hire: '',
+    count: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -34,8 +33,7 @@ const Reviewer = () => {
   const totalPages = Math.ceil(filteredReviewers.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentData = filteredReviewers.slice(startIndex, startIndex + rowsPerPage).map(item => {
-    const totalAmount = item.hire * (item.count );
- 
+    const totalAmount = item.hire * item.count;
     return { ...item, totalAmount };
   });
 
@@ -84,7 +82,6 @@ const Reviewer = () => {
       setError("Failed to update reviewer details");
     }
   };
-  
 
   const fetchReviewers = async () => {
     try {
@@ -92,32 +89,30 @@ const Reviewer = () => {
       setReviewers(response.data);
     } catch (error) {
       console.log(error);
-      setError('Failed to fetch reviewer');
+      setError('Failed to fetch reviewers');
     }
   };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken();
+      setAuthToken(token);
       fetchReviewers();
     } else {
       nav('/');
     }
   }, []);
+
   const handleDelete = async () => {
     try {
       await deletestaff(selectedReviewer._id);
-; // Close the modal
-fetchReviewers(); // Refresh the advisor list
-setSelectedReviewer(null);
-      // nav('/admin/reviewers'); // Redirect back to the main list page
+      fetchReviewers(); // Refresh the reviewers list
+      setSelectedReviewer(null);
     } catch (error) {
       console.log(error);
-      setError('Failed to delete advisor');
+      setError('Failed to delete reviewer');
     }
   };
-
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -132,6 +127,7 @@ setSelectedReviewer(null);
       document.body.appendChild(script);
     });
   };
+
   const handlePayment = async () => {
     const scriptLoaded = await loadRazorpayScript();
   
@@ -166,11 +162,9 @@ setSelectedReviewer(null);
             if (verifypayments.status === 200) {
               console.log('Payment verified successfully');
               // Optionally, update the UI or notify the user
-
-                 alert("Payment successfully")
-
-
-
+              fetchReviewers(); // Refresh the reviewers list
+              setSelectedReviewer(null); // Close the modal and return to table view
+              alert("Payment successful");
             } else {
               console.error('Payment verification failed');
               // Handle verification failure
@@ -240,15 +234,15 @@ setSelectedReviewer(null);
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.phone}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.stack}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire || 0}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.count || 0}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.count}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.paymentStatus}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
-                 <button
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button
+                    className="text-blue-600 hover:text-blue-800"
                     onClick={() => handleDetailsClick(item)}
-                    className="hover:underline"
                   >
-                    Details
+                    View Details
                   </button>
                 </td>
               </tr>
@@ -256,37 +250,24 @@ setSelectedReviewer(null);
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-between items-center">
-        <div className="text-sm text-gray-700">
-          {`${startIndex + 1}-${Math.min(startIndex + rowsPerPage, filteredReviewers.length)} of ${filteredReviewers.length}`}
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowBack size={24} />
-          </button>
-          {[...Array(totalPages).keys()].map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === page + 1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'
-              } hover:bg-gray-300`}
-            >
-              {page + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowForward size={24} />
-          </button>
-        </div>
+      <div className="flex justify-between items-center mt-4">
+        <button
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          <IoMdArrowBack />
+        </button>
+        <span className="text-sm font-medium">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          <IoMdArrowForward />
+        </button>
       </div>
 
       <Dialog open={!!selectedReviewer} onClose={() => setSelectedReviewer(null)} className="relative z-10">
@@ -311,96 +292,71 @@ setSelectedReviewer(null);
                   <div className="mt-2">
                     {isEditing ? (
                       <form onSubmit={handleFormSubmit} className="space-y-4">
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Name
-                            <input
-                              type="text"
-                              name="name"
-                              value={formData.name}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Name</label>
+                          <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Email
-                            <input
-                              type="email"
-                              name="email"
-                              value={formData.email}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Email</label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Phone Number
-                            <input
-                              type="text"
-                              name="phone"
-                              value={formData.phone}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                          <input
+                            type="text"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Stack
-                            <input
-                              type="text"
-                              name="stack"
-                              value={formData.stack}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Stack</label>
+                          <input
+                            type="text"
+                            name="stack"
+                            value={formData.stack}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Review Cash
-                            <input
-                              type="text"
-                              name="reviewCash"
-                              value={formData.reviewCash}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Review Cash</label>
+                          <input
+                            type="number"
+                            name="hire"
+                            value={formData.hire}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Total Review
-                            <input
-                              type="number"
-                              name="totalReview"
-                              value={formData.totalReview}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
-                        </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Total Amount
-                            <input
-                              type="text"
-                              name="totalAmount"
-                              value={formData.totalAmount}
-                              onChange={handleInputChange}
-                              className="mt-1 block w-full border rounded-md p-2"
-                              required
-                            />
-                          </label>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Total Review</label>
+                          <input
+                            type="number"
+                            name="count"
+                            value={formData.count}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                            required
+                          />
                         </div>
                         <div className="flex gap-4 mt-4">
                           <button
@@ -411,7 +367,7 @@ setSelectedReviewer(null);
                           </button>
                           <button
                             type="button"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                             onClick={() => setIsEditing(false)}
                           >
                             Cancel
@@ -433,10 +389,10 @@ setSelectedReviewer(null);
                           <strong>Stack:</strong> {selectedReviewer?.stack}
                         </div>
                         <div className="mb-2">
-                          <strong>Review Cash:</strong> {selectedReviewer?.reviewCash}
+                          <strong>Review Cash:</strong> {selectedReviewer?.hire}
                         </div>
                         <div className="mb-2">
-                          <strong>Total Review:</strong> {selectedReviewer?.totalReview}
+                          <strong>Total Review:</strong> {selectedReviewer?.count}
                         </div>
                         <div className="mb-2">
                           <strong>Total Amount:</strong> {selectedReviewer?.totalAmount}
@@ -456,13 +412,15 @@ setSelectedReviewer(null);
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      onClick={handlePayment}
-                    >
-                      Pay Cash
-                    </button>
+                    {selectedReviewer?.paymentStatus !== 'PAID' && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        onClick={handlePayment}
+                      >
+                        Pay Cash
+                      </button>
+                    )}
                   </>
                 )}
                 <button
@@ -473,12 +431,12 @@ setSelectedReviewer(null);
                   Close
                 </button>
                 <button
-  type="button"
-  className="inline-flex justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-  onClick={handleDelete}
->
-  Delete
-</button>
+                  type="button"
+                  className="inline-flex justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
               </div>
             </DialogPanel>
           </div>

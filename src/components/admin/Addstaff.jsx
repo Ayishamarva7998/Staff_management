@@ -59,17 +59,21 @@ const AddStaff = () => {
         stack: values.stack,
         hire: values.reviewCash,
       });
-
-      toast.success('Staff added successfully')
+  
+      toast.success('Staff added successfully');
       resetForm();
     } catch (error) {
-      toast.error('Error');
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('An unexpected error occurred');
+      }
       console.error('Error adding staff:', error);
     } finally {
       setSubmitting(false);
     }
   };
-
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
