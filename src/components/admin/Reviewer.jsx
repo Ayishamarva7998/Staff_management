@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { setAuthToken, viewReviewers } from '../../utils/api';
+import { setAuthToken, viewReviewers,updateStaff,deletestaff } from '../../utils/api';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 const rowsPerPage = 6;
 
 const Reviewer = () => {
@@ -19,7 +21,7 @@ const Reviewer = () => {
     stack: '',
     reviewCash: '',
     totalReview: '',
-    totalAmount: ''
+   
   });
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -59,13 +61,30 @@ const Reviewer = () => {
     }));
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here (e.g., update the reviewer data)
-    console.log('Updated Reviewer:', formData);
-    setSelectedReviewer(formData); // Update the selected reviewer with the new data
-    setIsEditing(false); // Return to view mode
+  
+    try {
+      // Make API call to update the staff/reviewer
+      await updateStaff(selectedReviewer._id, formData);
+  
+      // Update the reviewer state with the new data
+      setSelectedReviewer(formData);
+  
+      // Optionally, you may want to refetch the reviewers list to ensure data is up-to-date
+      fetchReviewers();
+  
+      // Exit edit mode
+      setIsEditing(false);
+  
+      // Provide feedback to the user
+      alert("Reviewer details updated successfully");
+    } catch (error) {
+      console.error("Error updating reviewer:", error);
+      setError("Failed to update reviewer details");
+    }
   };
+  
 
   const fetchReviewers = async () => {
     try {
@@ -86,6 +105,20 @@ const Reviewer = () => {
       nav('/');
     }
   }, []);
+  const handleDelete = async () => {
+    try {
+      await deletestaff(selectedReviewer._id);
+; // Close the modal
+fetchReviewers(); // Refresh the advisor list
+setSelectedReviewer(null);
+      // nav('/admin/reviewers'); // Redirect back to the main list page
+    } catch (error) {
+      console.log(error);
+      setError('Failed to delete advisor');
+    }
+  };
+
+
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -134,7 +167,7 @@ const Reviewer = () => {
               console.log('Payment verified successfully');
               // Optionally, update the UI or notify the user
 
-
+                 alert("Payment successfully")
 
 
 
@@ -195,7 +228,7 @@ const Reviewer = () => {
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Stack</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Review Cash</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Review</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Amount</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Payment Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Details</th>
             </tr>
           </thead>
@@ -209,7 +242,7 @@ const Reviewer = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.stack}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire || 0}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.count || 0}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.totalAmount || 0}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.paymentStatus}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
                  <button
                     onClick={() => handleDetailsClick(item)}
@@ -439,6 +472,13 @@ const Reviewer = () => {
                 >
                   Close
                 </button>
+                <button
+  type="button"
+  className="inline-flex justify-center rounded-md border border-transparent bg-red-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+  onClick={handleDelete}
+>
+  Delete
+</button>
               </div>
             </DialogPanel>
           </div>

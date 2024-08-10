@@ -28,7 +28,7 @@ export const updateAdminPassword = (adminId, passwordData) => api.put(`/${adminI
 export const addStaff = (staffData) => api.post('/admin/staff', staffData);
 
 // API call to update staff details
-export const updateStaff = (staffId, staffData) => api.patch(`/${staffId}`, staffData);
+export const updateStaff = (staffid, staffData) => api.patch(`/admin/update/${staffid}`, staffData);
 
 // API call to view advisors
 export const viewAdvisors = () => api.get('/admin/advisor');
@@ -37,7 +37,7 @@ export const viewAdvisors = () => api.get('/admin/advisor');
 export const viewReviewers = () => api.get('/admin/reviewer');
 
 // API call to delete an advisor
-export const deleteAdvisor = (advisorId) => api.delete(`/advisor/${advisorId}`);
+export const deletestaff = (staffId) => api.delete(`/admin/advisor/${staffId}`);
 
 // API call to search staff
 export const searchStaff = (query) => api.get(`/search`, { params: { query } });
