@@ -3,9 +3,7 @@ import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { setAuthToken, viewReviewers } from '../../utils/api';
-
-;
-
+import axios from 'axios';
 const rowsPerPage = 6;
 
 const Reviewer = () => {
@@ -33,7 +31,11 @@ const Reviewer = () => {
 
   const totalPages = Math.ceil(filteredReviewers.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
-  const currentData = filteredReviewers.slice(startIndex, startIndex + rowsPerPage);
+  const currentData = filteredReviewers.slice(startIndex, startIndex + rowsPerPage).map(item => {
+    const totalAmount = item.hire * (item.count );
+ 
+    return { ...item, totalAmount };
+  });
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -65,28 +67,108 @@ const Reviewer = () => {
     setIsEditing(false); // Return to view mode
   };
 
-  const fetchReviewers= async ()=>{
+  const fetchReviewers = async () => {
     try {
       const response = await viewReviewers();
-      setReviewers(response.data)
-      
+      setReviewers(response.data);
     } catch (error) {
       console.log(error);
       setError('Failed to fetch reviewer');
     }
-  }
+  };
 
   useEffect(() => {
-    const token= localStorage.getItem('token');
-    if(token){
-      setAuthToken(); 
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken();
       fetchReviewers();
-   }else{
-     nav('/'); 
-   }
-   }, []);
+    } else {
+      nav('/');
+    }
+  }, []);
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+  const handlePayment = async () => {
+    const scriptLoaded = await loadRazorpayScript();
+  
+    if (!scriptLoaded) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+  
+    try {
+      const orderResult = await axios.post(`http://localhost:4500/api/admin/payment/${selectedReviewer._id}`);
+      const { amount, id: razorpay_order_id, currency } = orderResult.data;
+  
+      const options = {
+        key: "rzp_test_3YFqc3qjVhg3aK", // Enter the Key ID generated from the Dashboard
+        amount: amount.toString(),
+        currency: currency,
+        name: "Your Company Name",
+        description: "Test Transaction",
+        order_id: razorpay_order_id,
+        handler: async function (response) {
+          // Prepare payment details for verification
+          const paymentDetails = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          };
+  
+          try {
+            // Send payment details to backend for verification
+            const verifypayments = await axios.post('http://localhost:4500/api/admin/verifypayment', paymentDetails);
+  
+            if (verifypayments.status === 200) {
+              console.log('Payment verified successfully');
+              // Optionally, update the UI or notify the user
 
 
+
+
+
+            } else {
+              console.error('Payment verification failed');
+              // Handle verification failure
+            }
+          } catch (error) {
+            console.error('Error while verifying payment:', error);
+            // Handle network or server errors
+          }
+        },
+        prefill: {
+          name: selectedReviewer.name,
+          email: selectedReviewer.email,
+          contact: selectedReviewer.phone,
+        },
+        notes: {
+          address: "Your Company Address",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+  
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+  
+    } catch (error) {
+      console.error("Error while creating Razorpay order:", error);
+      alert("There was an error processing your payment. Please try again.");
+    }
+  };
+  
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -125,11 +207,11 @@ const Reviewer = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.phone}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.stack}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.totalReview||0}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.totalAmount}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire || 0}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.count || 0}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.totalAmount || 0}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
-                  <button
+                 <button
                     onClick={() => handleDetailsClick(item)}
                     className="hover:underline"
                   >
@@ -344,7 +426,7 @@ const Reviewer = () => {
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      onClick={() => console.log('Pay Cash for', selectedReviewer?.name)}
+                      onClick={handlePayment}
                     >
                       Pay Cash
                     </button>
