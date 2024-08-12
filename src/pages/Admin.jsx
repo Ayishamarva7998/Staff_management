@@ -21,7 +21,7 @@ const Admin = () => {
     { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
     { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
     { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
-    { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-new-staff" },
+    { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
   ];
   
 
@@ -89,13 +89,13 @@ const Admin = () => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1">
-        <Header  />
+      <div className="h-screen flex-1 w-100 overflow-auto">
+      <Header rout={rout} />
         {rout === "advisors" ? (
           <Advisor />
         ) : rout === "reviewers" ? (
           <Reviewer />
-        ) : rout === "add-new-staff" ? (
+        ) : rout === "add-staff" ? (
           <AddStaff />
         ) :rout === 'meeting'? (
           <Meeting/>

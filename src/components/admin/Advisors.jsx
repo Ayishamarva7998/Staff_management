@@ -15,6 +15,7 @@ const Advisor = () => {
   const [error, setError] = useState(null);
 
   const nav=useNavigate();
+  
   const fetchAdvisors = async () => {
     try {
       const response = await viewAdvisors();
@@ -63,9 +64,9 @@ const Advisor = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+        {/* <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onClick={()=>nav('/admin/add-new-staff')}>
           + Add advisor
-        </button>
+        </button> */}
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto">
@@ -86,7 +87,7 @@ const Advisor = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1 + startIndex}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.batch}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.batch }</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.phone}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
                   <button

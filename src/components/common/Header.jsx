@@ -12,11 +12,22 @@ const menuOptions = [
   }}
 ];
 
-export default function Header() {
+function formatRout(rout) {
+  return rout
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+export default function Header({rout}) {
+  
+  const formattedRout = formatRout(rout);
+  
   return (
     <header className="bg-white text-dark-gray shadow-md">
-      <nav className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <nav className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">       
         <div className="relative flex h-16 items-center justify-between">
+        <h1 className="text-2xl font-bold text-dark-gray">{formattedRout}</h1>
           <div className="flex-1" />
 
           <Menu as="div" className="relative ml-3">

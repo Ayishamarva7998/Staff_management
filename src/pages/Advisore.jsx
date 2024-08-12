@@ -1,23 +1,22 @@
 import { useState } from "react";
+import { IoMdMail } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import Inbox from "../components/advisor/Inbox";
-import { IoMdMail } from "react-icons/io";
-import { SiGooglemeet } from "react-icons/si";
+import { FaBusinessTime } from "react-icons/fa";
+import ReviewsTime from "../components/advisor/ReviewsTime";
+
 
 
 const Advisor = () => {
-    const { rout } = useParams();
-    
   const [open, setOpen] = useState(true);
   const iconSize = 24;
-
-  const Datas= [
+  const { rout } = useParams();
+  const Data = [
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
-    { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting",gap:true },
-    { title: "Schedule Review", icon: <SiGooglemeet size={iconSize} />, url: "schedule-review" },
+    { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
   ];
-
+  
 
 
   return (
@@ -63,7 +62,7 @@ const Advisor = () => {
           />
         </div>
         <ul className="pt-6">
-          {Datas.map((data, index) => (
+          {Data.map((data, index) => (
             <Link key={index} to={`/advisor/${data.url}`}>
               {" "}
               <li
@@ -83,21 +82,21 @@ const Advisor = () => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1">
-        <Header/>
-        <Inbox/>
-        {/* {rout === "advisors" ? (
-          <Advisor />
-        ) : rout === "reviewers" ? (
-          <Reviewer />
-        ) : rout === "add-new-staff" ? (
-          <Addstaff />
-        ) :rout === 'meeting'? (
-          <Meetings/>
-        ): rout=== 'inbox' ?(
+      <div className="h-screen flex-1 w-100 overflow-auto">
+      <Header rout={rout} />
+      
+     
+        {rout === "inbox" ? (
           <Inbox/>
-        ):''} */}
-        
+        ) : rout === "review-time" ? (
+           <ReviewsTime/>
+        ) : rout === "add-new-staff" ? (
+          <h1>Not found the Page </h1>
+        ) :rout === 'meeting'? (
+          <h1>Not found the Page </h1>
+        ): rout=== '' ?(
+          <h1>Not found the Page </h1>
+        ):''}
       </div>
     </div>
   );

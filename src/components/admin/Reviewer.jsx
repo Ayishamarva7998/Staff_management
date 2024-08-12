@@ -3,6 +3,7 @@ import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { setAuthToken, viewReviewers } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 ;
 
@@ -24,6 +25,8 @@ const Reviewer = () => {
     totalAmount: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
+
+  const nav =useNavigate();
 
   // Filter reviewers based on the search term
   const filteredReviewers = reviewers.filter(reviewer =>
@@ -97,9 +100,6 @@ const Reviewer = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-          + Add Reviewer
-        </button>
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto">

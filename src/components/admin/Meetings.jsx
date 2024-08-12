@@ -173,15 +173,15 @@ const Meeting = () => {
                   Select Staff
                 </button>
                 <div className="mt-2">
-                  {selectedStaff.length > 0 ? (
-                    <ul className="list-disc pl-5">
-                      {selectedStaff.map((email, index) => (
-                        <li key={index} >{email}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No staff selected</p>
-                  )}
+                {selectedStaff.length > 0 ? (
+  <ul className="list-disc pl-5">
+    {selectedStaff.map((email, index) => (
+      <li key={index} className="break-all">{email}</li>
+    ))}
+  </ul>
+) : (
+  <p>No staff selected</p>
+)}
                 </div>
               </div>
 
