@@ -3,7 +3,7 @@ import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useNavigate } from 'react-router-dom';
 
-const rowsPerPage = 6;
+const rowsPerPage = 5;
 
 const Feestable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,17 +82,17 @@ const Feestable = () => {
       time: '15:00',
       paymentStatus: 'unpaid'
     },
-    {
-      _id: '7',
-      name: 'Eve Adams',
-      studentEmail: 'eve.adams@example.com',
-      batch: '2024',
-      stack: 'MEAN',
-      reviewCash: '$140',
-      date: '2024-08-05',
-      time: '16:00',
-      paymentStatus: 'paid'
-    }
+    // {
+    //   _id: '7',
+    //   name: 'Eve Adams',
+    //   studentEmail: 'eve.adams@example.com',
+    //   batch: '2024',
+    //   stack: 'MEAN',
+    //   reviewCash: '$140',
+    //   date: '2024-08-05',
+    //   time: '16:00',
+    //   paymentStatus: 'paid'
+    // }
   ];
 
   // Filter review based on the search term
@@ -173,38 +173,40 @@ const Feestable = () => {
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-between items-center">
-        <div className="text-sm text-gray-700">
-          {`${startIndex + 1}-${Math.min(startIndex + rowsPerPage, filteredReview.length)} of ${filteredReview.length}`}
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowBack size={24} />
-          </button>
-          {[...Array(totalPages).keys()].map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === page + 1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'
-              } hover:bg-gray-300`}
-            >
-              {page + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowForward size={24} />
-          </button>
-        </div>
-      </div>
+      {totalPages > 1 && (
+  <div className="mt-6 flex justify-center sm:justify-end gap-3 items-center">
+    <button
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+    >
+      <IoMdArrowBack size={20} />
+    </button>
+    {[...Array(totalPages).keys()].map((page) => (
+      <button
+        key={page}
+        onClick={() => handlePageChange(page + 1)}
+        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg ${
+          currentPage === page + 1
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+        }`}
+      >
+        {page + 1}
+      </button>
+    ))}
+    <button
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+    >
+      <IoMdArrowForward size={20} />
+    </button>
+  </div>
+)}
+
+
+
       <Dialog open={Boolean(selectedReview)} onClose={() => setSelectedReview(null)} className="relative z-50">
   <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
   <div className="fixed inset-0 flex items-center justify-center p-4">
