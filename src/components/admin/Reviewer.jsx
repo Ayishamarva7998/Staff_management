@@ -3,7 +3,9 @@ import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { setAuthToken, viewReviewers } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 const rowsPerPage = 6;
 
 const Reviewer = () => {
@@ -22,6 +24,8 @@ const Reviewer = () => {
     totalAmount: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
+
+  const nav =useNavigate();
 
   // Filter reviewers based on the search term
   const filteredReviewers = reviewers.filter(reviewer =>
@@ -103,7 +107,7 @@ const Reviewer = () => {
     const scriptLoaded = await loadRazorpayScript();
   
     if (!scriptLoaded) {
-      alert("Razorpay SDK failed to load. Are you online?");
+      toast.error("Razorpay SDK failed to load. Are you online?");
       return;
     }
   
@@ -165,23 +169,20 @@ const Reviewer = () => {
   
     } catch (error) {
       console.error("Error while creating Razorpay order:", error);
-      alert("There was an error processing your payment. Please try again.");
+      toast.error("There was an error processing your payment. Please try again.");
     }
   };
   
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 overflow-auto">
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
           placeholder="Search..."
-          className="px-4 py-2 border rounded-md"
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 w-full max-w-md sm:max-w-sm md:max-w-xs lg:max-w-xs xl:max-w-xs"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-          + Add Reviewer
-        </button>
       </div>
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto">
@@ -223,38 +224,37 @@ const Reviewer = () => {
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-between items-center">
-        <div className="text-sm text-gray-700">
-          {`${startIndex + 1}-${Math.min(startIndex + rowsPerPage, filteredReviewers.length)} of ${filteredReviewers.length}`}
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowBack size={24} />
-          </button>
-          {[...Array(totalPages).keys()].map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === page + 1 ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-700'
-              } hover:bg-gray-300`}
-            >
-              {page + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50 hover:bg-gray-400"
-          >
-            <IoMdArrowForward size={24} />
-          </button>
-        </div>
-      </div>
+      {totalPages > 1 && (
+  <div className="mt-6 flex justify-center sm:justify-end gap-3 items-center">
+    <button
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+    >
+      <IoMdArrowBack size={20} />
+    </button>
+    {[...Array(totalPages).keys()].map((page) => (
+      <button
+        key={page}
+        onClick={() => handlePageChange(page + 1)}
+        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg ${
+          currentPage === page + 1
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+        }`}
+      >
+        {page + 1}
+      </button>
+    ))}
+    <button
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+    >
+      <IoMdArrowForward size={20} />
+    </button>
+  </div>
+)}
 
       <Dialog open={!!selectedReviewer} onClose={() => setSelectedReviewer(null)} className="relative z-10">
         <DialogBackdrop

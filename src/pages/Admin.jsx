@@ -1,17 +1,29 @@
 import { useState } from "react";
-import Header from "./Header";
 import { Link, useParams } from "react-router-dom";
-import Advisor from "../admin/Advisors";
-import Reviewer from "../admin/Reviewer";
-import Addstaff from "../admin/Addstaff";
-import { Datas } from "./SidebarData";
-import Meetings from "../admin/Meetings";
-import Inbox from "../admin/Inbox";
+import Advisor from "../components/admin/Advisors";
+import Reviewer from "../components/admin/Reviewer";
+import Inbox from "../components/admin/Inbox";
+import { IoMdMail, IoMdPeople } from "react-icons/io";
+import { MdGroups } from "react-icons/md";
+import { SiGooglemeet } from "react-icons/si";
+import { IoPersonAdd } from "react-icons/io5";
+import Header from "../components/common/Header";
+import Meeting from "../components/admin/Meetings";
+import AddStaff from "../components/admin/Addstaff";
 
-const Sidebar = () => {
+
+const Admin = () => {
   const [open, setOpen] = useState(true);
-
+  const iconSize = 24;
   const { rout } = useParams();
+  const Data = [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
+    { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
+    { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
+    { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
+    { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
+  ];
+  
 
 
   return (
@@ -57,7 +69,7 @@ const Sidebar = () => {
           />
         </div>
         <ul className="pt-6">
-          {Datas.map((data, index) => (
+          {Data.map((data, index) => (
             <Link key={index} to={`/admin/${data.url}`}>
               {" "}
               <li
@@ -77,16 +89,16 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1">
-        <Header  />
+      <div className="h-screen flex-1 w-100 overflow-auto">
+      <Header rout={rout} />
         {rout === "advisors" ? (
           <Advisor />
         ) : rout === "reviewers" ? (
           <Reviewer />
-        ) : rout === "add-new-staff" ? (
-          <Addstaff />
+        ) : rout === "add-staff" ? (
+          <AddStaff />
         ) :rout === 'meeting'? (
-          <Meetings/>
+          <Meeting/>
         ): rout=== 'inbox' ?(
           <Inbox/>
         ):''}
@@ -96,4 +108,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Admin;

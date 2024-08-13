@@ -1,19 +1,27 @@
 import { useState } from "react";
-import Header from "./Header";
 import { Link, useParams } from "react-router-dom";
-import Advisor from "../admin/Advisors";
-import Reviewer from "../admin/Reviewer";
-import Addstaff from "../admin/Addstaff";
-import { Datas } from "./SidebarData";
-import Meetings from "../admin/Meetings";
-import Inbox from "../admin/Inbox";
+import Header from "../components/common/Header";
+import { IoMdMail } from "react-icons/io";
+import { SiGooglemeet } from "react-icons/si";
+import { FaCalendarTimes, FaMoneyCheckAlt } from "react-icons/fa";
+import { MdWorkHistory } from "react-icons/md";
+import Feestable from "../components/reviewer/Feestable";
+import BookingTimes from "../components/reviewer/BookingTimes";
+import ScheduleTime from "../components/reviewer/ScheduleTime";
+import Inbox from "../components/reviewer/Inbox";
 
-const Sidebar = () => {
-  const [open, setOpen] = useState(true);
-
+const Reviewer = () => {
   const { rout } = useParams();
 
+  const [open, setOpen] = useState(true);
+  const iconSize = 24;
 
+  const Datas = [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox",   },
+    { title: "Schedule Time", icon: <FaCalendarTimes size={iconSize} />, url: "booking-time" ,gap: true},
+    { title: "Work Time", icon: <MdWorkHistory  size={iconSize} />, url: "work-time" },
+    { title: "Fees Table", icon: <FaMoneyCheckAlt  size={iconSize} />, url: "fees-table",gap:true },
+  ];
   return (
     <div className="flex">
       <div
@@ -58,7 +66,7 @@ const Sidebar = () => {
         </div>
         <ul className="pt-6">
           {Datas.map((data, index) => (
-            <Link key={index} to={`/admin/${data.url}`}>
+            <Link key={index} to={`/reviewer/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -77,23 +85,21 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1">
-        <Header  />
-        {rout === "advisors" ? (
-          <Advisor />
-        ) : rout === "reviewers" ? (
-          <Reviewer />
-        ) : rout === "add-new-staff" ? (
-          <Addstaff />
-        ) :rout === 'meeting'? (
-          <Meetings/>
-        ): rout=== 'inbox' ?(
+      <div className="h-screen flex-1 w-100 overflow-auto">
+        <Header rout={rout} />
+
+         {rout === "inbox" ? (
           <Inbox/>
-        ):''}
-        
+        ) : rout === "booking-time" ? (
+         <ScheduleTime/>
+        ) : rout === "work-time" ? (
+          <BookingTimes/>
+        ) :rout === 'fees-table'? (
+          <Feestable />
+        ): ''}
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default Reviewer;

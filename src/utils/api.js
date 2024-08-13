@@ -50,4 +50,28 @@ export const createMeeting = (meetingData) => api.post('/admin/meetings', meetin
 
 //get all staffs 
 export const getallstaffs = ()=>api.get('/admin/staffs');
+
+
+
+
+
+
+// timeslot 
+
+export const timeslot = ()=>api.get('/staff/timeslots');
+
+export const createtimeslot =(cratedata)=>api.post('/staff/createtimeslot',cratedata);
+
+export const updatetimeslot =(id, updatedata)=>api.put(`/staff/updatetimeslot/${id}`,updatedata);
+
+export const deleteTimeslot = (id) => api.delete(`/staff/deletetimeslot/${id}`);
+
+export const getreviewertimeslots =(id)=>api.get(`/staff/reviewer/${id}/timeslots`);
+
+//Bookings
+
+export const bookings = (bookingdetails)=>api.post('/staff/booking',bookingdetails);
+
+export const getbookings = (id)=> api.get(`/staff/reviewer/${id}/bookings`)
+
 export default api;

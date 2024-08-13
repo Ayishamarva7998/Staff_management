@@ -1,17 +1,22 @@
 import { useState } from "react";
-import Header from "./Header";
+import { IoMdMail } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
-import Advisor from "../admin/Advisors";
-import Reviewer from "../admin/Reviewer";
-import Addstaff from "../admin/Addstaff";
-import { Datas } from "./SidebarData";
-import Meetings from "../admin/Meetings";
-import Inbox from "../admin/Inbox";
+import Header from "../components/common/Header";
+import Inbox from "../components/advisor/Inbox";
+import { FaBusinessTime } from "react-icons/fa";
+import ReviewsTime from "../components/advisor/ReviewsTime";
 
-const Sidebar = () => {
+
+
+const Advisor = () => {
   const [open, setOpen] = useState(true);
-
+  const iconSize = 24;
   const { rout } = useParams();
+  const Data = [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
+    { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
+  ];
+  
 
 
   return (
@@ -57,8 +62,8 @@ const Sidebar = () => {
           />
         </div>
         <ul className="pt-6">
-          {Datas.map((data, index) => (
-            <Link key={index} to={`/admin/${data.url}`}>
+          {Data.map((data, index) => (
+            <Link key={index} to={`/advisor/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -77,23 +82,24 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1">
-        <Header  />
-        {rout === "advisors" ? (
-          <Advisor />
-        ) : rout === "reviewers" ? (
-          <Reviewer />
-        ) : rout === "add-new-staff" ? (
-          <Addstaff />
-        ) :rout === 'meeting'? (
-          <Meetings/>
-        ): rout=== 'inbox' ?(
+      <div className="h-screen flex-1 w-100 overflow-auto">
+      <Header rout={rout} />
+      
+     
+        {rout === "inbox" ? (
           <Inbox/>
+        ) : rout === "review-time" ? (
+           <ReviewsTime/>
+        ) : rout === "add-new-staff" ? (
+          <h1>Not found the Page </h1>
+        ) :rout === 'meeting'? (
+          <h1>Not found the Page </h1>
+        ): rout=== '' ?(
+          <h1>Not found the Page </h1>
         ):''}
-        
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default Advisor;

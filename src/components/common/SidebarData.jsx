@@ -1,7 +1,10 @@
 import { IoMdMail, IoMdPeople, IoMdCash } from "react-icons/io";
-import {  MdGroups } from "react-icons/md";
+import {  MdEventBusy, MdGroups, MdWorkHistory } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
 import { SiGooglemeet } from "react-icons/si";
+import { FaBusinessTime } from "react-icons/fa6";
+import { TbCalendarTime } from "react-icons/tb";
+import { FaCalendarTimes } from "react-icons/fa";
 
 let worker = 'admin';
 const iconSize = 24; // Adjust the size as needed
@@ -21,8 +24,9 @@ const advisoreData = [
 ];
 
 const reviewersData = [
-  { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting" },
-  { title: "Add New Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-new-staff" },
+  { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox",   },
+  { title: "Schedule Time", icon: <FaCalendarTimes size={iconSize} />, url: "schedule-time" ,gap: true},
+  { title: "Work Time", icon: <MdWorkHistory  size={iconSize} />, url: "work-time" },
 ];
 
 export const Datas = worker === 'admin' ? adminData :worker==='advisors'? advisoreData: reviewersData;
