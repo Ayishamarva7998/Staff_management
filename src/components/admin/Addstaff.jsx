@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { RingLoader } from "react-spinners";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { addStaff, setAuthToken } from "../../utils/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Dialog } from "@headlessui/react";
+import Select from "react-select";
+
 
 const AddStaff = () => {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false); // Added loading state
-
+  const [selectedBatches, setSelectedBatches] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const initialValues = {
     name: "",
     email: "",
@@ -17,7 +21,7 @@ const AddStaff = () => {
     password: "",
     confirmPassword: "",
     role: "",
-    batch: "",
+    batches: [],
     stack: "",
     hire: "",
   };
@@ -37,11 +41,13 @@ const AddStaff = () => {
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm password is required"),
     role: Yup.string().required("Role is required"),
-    batch: Yup.string().when("role", {
-      is: "advisor",
-      then: (schema) => schema.required("Batch is required for advisors"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+    batches: Yup.array().of(
+      Yup.string().when("role", {
+        is: "advisor",
+        then: (schema) => schema.required("Batch is required for advisors"),
+        otherwise: (schema) => schema.notRequired(),
+      })
+    ),
     stack: Yup.string().when("role", {
       is: "reviewer",
       then: (schema) => schema.required("Stack is required for reviewers"),
@@ -56,7 +62,10 @@ const AddStaff = () => {
   
 
   const onSubmit = async (values, { setSubmitting, resetForm }) => {
-    setLoading(true); // Start loading
+    setLoading(true); 
+
+    console.log(values,'im suhaib');
+    
     try {
       const response = await addStaff(values);
       toast.success(response.data.message);
@@ -80,7 +89,20 @@ const AddStaff = () => {
     }
   }, [nav]);
 
-  return (
+
+  const batchOptions = [
+    { value: "Batch1", label: "Batch 1" },
+    { value: "Batch2", label: "Batch 2" },
+    { value: "Batch3", label: "Batch 3" },
+    { value: "Batch4", label: "Batch 4" },
+    { value: "Batch5", label: "Batch 5" },
+    { value: "Batch6", label: "Batch 6" },
+    { value: "Batch7", label: "Batch 7" },
+    { value: "Batch8", label: "Batch 8" }
+  ];
+
+
+  return (<>
     <div className=" bg-gray-100 w-full h-[89vh] overflow-auto p-6">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6">Register Staff</h1>
@@ -223,30 +245,37 @@ const AddStaff = () => {
             </div>
 
             {values.role === "advisor" && (
-              <div className="mb-4">
-                <label
-                  htmlFor="batch"
-                  className="block text-gray-700 text-sm font-semibold mb-2"
-                >
-                  Batch
-                </label>
-                <Field
-                  as="select"
-                  id="batch"
-                  name="batch"
-                  className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="" label="Select batch" />
-                  <option value="batch1" label="Batch 1" />
-                  <option value="batch2" label="Batch 2" />
-                </Field>
-                <ErrorMessage
-                  name="batch"
-                  component="div"
-                  className="text-red-500 text-xs mt-2"
-                />
-              </div>
-            )}
+                <div className="mb-4">
+                  <label
+                    htmlFor="batches"
+                    className="block text-gray-700 text-sm font-semibold mb-2"
+                  >
+                    Batches
+                  </label>
+                  <button
+                    type="button"
+                    className="text-blue-500"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Add Batch
+                  </button>
+                  <div className="mt-2">
+                    {selectedBatches.map((batch) => (
+                      <span
+                        key={batch.value}
+                        className="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded"
+                      >
+                        {batch.label}
+                      </span>
+                    ))}
+                  </div>
+                  <ErrorMessage
+                    name="batches"
+                    component="div"
+                    className="text-red-500 text-xs mt-2"
+                  />
+                </div>
+              )}
 
             {values.role === "reviewer" && (
               <>
@@ -308,6 +337,34 @@ const AddStaff = () => {
       </Formik>
       </div>
     </div>
+    <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm sm:max-w-md md:max-w-lg w-full">
+          <Dialog.Title className="text-xl font-semibold mb-4">
+            Select Batches
+          </Dialog.Title>
+          <Select
+            isMulti
+            options={batchOptions}
+            value={selectedBatches}
+            onChange={setSelectedBatches}
+            className="mb-4"
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-150"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Dialog>
+    </>
   );
 };
 
