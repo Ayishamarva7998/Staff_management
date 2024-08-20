@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
-import { getbookings, setAuthToken } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { FiCalendar, FiClock, FiMail, FiUsers, FiLayers, FiClipboard, FiInfo, FiCheckCircle, FiX } from 'react-icons/fi';
+import { getbookings, setAuthToken } from '../../../api/staff_api';
+import { getIdFromToken } from '../../../services/authService';
 
 const initialBookings = [
   { id: 1, date: '2024-08-10', time: '10:00 AM', studentEmail: 'student1@example.com', week: 'Week 1', stack: 'Frontend' },
@@ -55,7 +56,7 @@ const BookingTime = () => {
 
   const fetchBookings = async ()=>{
    try {
-    const id = localStorage.getItem('worker_id');
+    const id = getIdFromToken();
     const response = await getbookings(id);
     console.log(response.data);
     

@@ -1,27 +1,24 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Header from "../components/common/Header";
 import { IoMdMail } from "react-icons/io";
-import { SiGooglemeet } from "react-icons/si";
-import { FaCalendarTimes, FaMoneyCheckAlt } from "react-icons/fa";
-import { MdWorkHistory } from "react-icons/md";
-import Feestable from "../components/reviewer/Feestable";
-import BookingTimes from "../components/reviewer/BookingTimes";
-import ScheduleTime from "../components/reviewer/ScheduleTime";
-import Inbox from "../components/reviewer/Inbox";
+import { Link, useParams } from "react-router-dom";
+import Header from "../common/Header";
+import { FaBusinessTime } from "react-icons/fa";
+import Inbox from "./pages/Inbox";
+import ReviewsTime from "./pages/ReviewsTime";
 
-const Reviewer = () => {
-  const { rout } = useParams();
 
+
+const Advisor = () => {
   const [open, setOpen] = useState(true);
   const iconSize = 24;
-
-  const Datas = [
-    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox",   },
-    { title: "Schedule Time", icon: <FaCalendarTimes size={iconSize} />, url: "booking-time" ,gap: true},
-    { title: "Work Time", icon: <MdWorkHistory  size={iconSize} />, url: "work-time" },
-    { title: "Fees Table", icon: <FaMoneyCheckAlt  size={iconSize} />, url: "fees-table",gap:true },
+  const { rout } = useParams();
+  const Data = [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
+    { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
   ];
+  
+
+
   return (
     <div className="flex">
       <div
@@ -65,8 +62,8 @@ const Reviewer = () => {
           />
         </div>
         <ul className="pt-6">
-          {Datas.map((data, index) => (
-            <Link key={index} to={`/reviewer/${data.url}`}>
+          {Data.map((data, index) => (
+            <Link key={index} to={`/advisor/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -86,20 +83,23 @@ const Reviewer = () => {
         </ul>
       </div>
       <div className="h-screen flex-1 w-100 overflow-auto">
-        <Header rout={rout} />
-
-         {rout === "inbox" ? (
+      <Header rout={rout} />
+      
+     
+        {rout === "inbox" ? (
           <Inbox/>
-        ) : rout === "booking-time" ? (
-         <ScheduleTime/>
-        ) : rout === "work-time" ? (
-          <BookingTimes/>
-        ) :rout === 'fees-table'? (
-          <Feestable />
-        ): ''}
+        ) : rout === "review-time" ? (
+        <ReviewsTime/>
+        ) : rout === "add-new-staff" ? (
+          <h1>Not found the Page </h1>
+        ) :rout === 'meeting'? (
+          <h1>Not found the Page </h1>
+        ): rout=== '' ?(
+          <h1>Not found the Page </h1>
+        ):''}
       </div>
     </div>
   );
 };
 
-export default Reviewer;
+export default Advisor;

@@ -5,9 +5,10 @@ import { LuFileEdit } from 'react-icons/lu';
 import { MdDelete } from 'react-icons/md';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { createtimeslot, deleteTimeslot, getreviewertimeslots, setAuthToken, timeslot, updatetimeslot } from '../../utils/api';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { createtimeslot, getreviewertimeslots, setAuthToken } from '../../../api/staff_api';
+import { getIdFromToken } from '../../../services/authService';
 
 
 const rowsPerPage = 5;
@@ -27,7 +28,8 @@ const ScheduleTime = () => {
 
   const fetchtime = async ()=>{
     try {
-      const id = localStorage.getItem('worker_id');
+      const id = getIdFromToken();
+      
       const response = await getreviewertimeslots(id);     
       setAvailableTimes(response.data);      
     } catch (error) {
@@ -49,7 +51,7 @@ const ScheduleTime = () => {
 
    const handleAddTime = async (values, { resetForm }) => {
     try {
-      const id = localStorage.getItem('worker_id'); // Fetch the stored user ID
+      const id = getIdFromToken(); 
       if (!id) {
         throw new Error('User ID not found in local storage');
       }

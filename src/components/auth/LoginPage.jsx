@@ -1,10 +1,10 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import toast from "react-hot-toast";
-import { login, setAuthToken } from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../api/auth_api";
+import { setAuthToken } from "../../api/admin_api";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -28,18 +28,20 @@ const LoginPage = () => {
         password: values.password,
         role: values.position,
       });
+
       const token = response.data.token;
       localStorage.setItem("token", token);
-      localStorage.setItem("worker_id", response.data._id);
+      
+      // localStorage.setItem("worker_id", response.data._id);
       setAuthToken(token);
       console.log("Login successful:", response.data);
       toast.success("Login successful");
-      if(values.position=== 'admin'){
+      if (values.position === "admin") {
         navigate("/admin/inbox");
-      }else if(values.position=== 'advisor'){
-        navigate("/advisor/inbox");        
-      }else if(values.position === 'reviewer'){
-        navigate("/reviewer/inbox");   
+      } else if (values.position === "advisor") {
+        navigate("/advisor/inbox");
+      } else if (values.position === "reviewer") {
+        navigate("/reviewer/inbox");
       }
     } catch (error) {
       console.error(
@@ -51,7 +53,7 @@ const LoginPage = () => {
       setSubmitting(false);
     }
   };
-
+  
   return (
     <div className="flex h-screen">
       <div
