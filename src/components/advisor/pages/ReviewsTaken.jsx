@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { allbookings ,reviewcount} from '../../../api/staff_api';
-// import { allbookings, reviewcount } from '../../utils/api'; // Import your API functions
+import { allbookings, reviewcount } from '../../../api/staff_api';
 
 const ReviewsTaken = () => {
   const [reviewers, setReviewers] = useState([]);
@@ -11,18 +10,21 @@ const ReviewsTaken = () => {
     const fetchBookings = async () => {
       try {
         const response = await allbookings(); // Fetch bookings from API
+        console.log(response.data);
         const bookings = response.data;
 
-        // Group bookings by reviewer
+        // Group bookings by reviewer, ensuring the booking and reviewer exist
         const reviewerMap = bookings.reduce((acc, booking) => {
-          const reviewerId = booking.reviewer._id;
-          if (!acc[reviewerId]) {
-            acc[reviewerId] = {
-              ...booking.reviewer,
-              bookings: [],
-            };
+          if (booking && booking.reviewer) { // Check if booking and reviewer exist
+            const reviewerId = booking.reviewer._id;
+            if (!acc[reviewerId]) {
+              acc[reviewerId] = {
+                ...booking.reviewer,
+                bookings: [],
+              };
+            }
+            acc[reviewerId].bookings.push(booking);
           }
-          acc[reviewerId].bookings.push(booking);
           return acc;
         }, {});
 
