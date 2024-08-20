@@ -3,10 +3,11 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { MdAccessTime, MdBook, MdCode, MdDateRange, MdEmail } from 'react-icons/md';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { bookings, setAuthToken, timeslot } from '../../utils/api';
+
 import { IoMdPeople } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { setAuthToken, timeslot } from '../../../api/staff_api';
 
 // Timeslot data
 const timeslots = [
@@ -77,7 +78,10 @@ const ReviewsTime = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const advisorId = localStorage.getItem('worker_id');
+      // const advisorId = localStorage.getItem('worker_id');
+    const token = localStorage.getItem('token');
+    const id = token._id;
+    console.log(id);
     
     if (!advisorId) {
       throw new Error('Advisor ID not found');

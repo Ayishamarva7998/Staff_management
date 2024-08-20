@@ -5,9 +5,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { createMeeting, getallstaffs, setAuthToken } from '../../utils/api';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { createMeeting, getallstaffs, setAuthToken } from '../../../../api/admin_api';
 
 const Meeting = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -86,7 +86,6 @@ const Meeting = () => {
       const response = await getallstaffs();
       if (response) {
         setStaffList(response?.data?.staffs);
-        console.log(response?.data?.staffs);
       } else {
         setStaffList([]);
       }
@@ -266,7 +265,7 @@ const Meeting = () => {
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 h-[250px] overflow-auto">
                   <div className="flex items-center mb-4">
                     <input
                       type="checkbox"

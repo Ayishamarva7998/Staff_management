@@ -1,31 +1,27 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Advisor from "../components/admin/Advisors";
-import Reviewer from "../components/admin/Reviewer";
-import Inbox from "../components/admin/Inbox";
-import { IoMdMail, IoMdPeople } from "react-icons/io";
-import { MdGroups } from "react-icons/md";
+import Header from "../common/Header";
+import { IoMdMail } from "react-icons/io";
 import { SiGooglemeet } from "react-icons/si";
-import { IoPersonAdd } from "react-icons/io5";
-import Header from "../components/common/Header";
-import Meeting from "../components/admin/Meetings";
-import AddStaff from "../components/admin/Addstaff";
+import { FaCalendarTimes, FaMoneyCheckAlt } from "react-icons/fa";
+import { MdWorkHistory } from "react-icons/md";
+import Feestable from "./pages/Feestable";
+import BookingTimes from "./pages/BookingTimes";
+import ScheduleTime from "./pages/ScheduleTime";
+import Inbox from "./pages/Inbox";
 
+const Reviewer = () => {
+  const { rout } = useParams();
 
-const Admin = () => {
   const [open, setOpen] = useState(true);
   const iconSize = 24;
-  const { rout } = useParams();
-  const Data = [
-    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
-    { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
-    { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
-    { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
-    { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
+
+  const Datas = [
+    { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox",   },
+    { title: "Schedule Time", icon: <FaCalendarTimes size={iconSize} />, url: "booking-time" ,gap: true},
+    { title: "Work Time", icon: <MdWorkHistory  size={iconSize} />, url: "work-time" },
+    { title: "Fees Table", icon: <FaMoneyCheckAlt  size={iconSize} />, url: "fees-table",gap:true },
   ];
-  
-
-
   return (
     <div className="flex">
       <div
@@ -69,8 +65,8 @@ const Admin = () => {
           />
         </div>
         <ul className="pt-6">
-          {Data.map((data, index) => (
-            <Link key={index} to={`/admin/${data.url}`}>
+          {Datas.map((data, index) => (
+            <Link key={index} to={`/reviewer/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -90,22 +86,20 @@ const Admin = () => {
         </ul>
       </div>
       <div className="h-screen flex-1 w-100 overflow-auto">
-      <Header rout={rout} />
-        {rout === "advisors" ? (
-          <Advisor />
-        ) : rout === "reviewers" ? (
-          <Reviewer />
-        ) : rout === "add-staff" ? (
-          <AddStaff />
-        ) :rout === 'meeting'? (
-          <Meeting/>
-        ): rout=== 'inbox' ?(
+        <Header rout={rout} />
+
+         {rout === "inbox" ? (
           <Inbox/>
-        ):''}
-        
+        ) : rout === "booking-time" ? (
+         <ScheduleTime/>
+        ) : rout === "work-time" ? (
+          <BookingTimes/>
+        ) :rout === 'fees-table'? (
+          <Feestable />
+        ): ''}
       </div>
     </div>
   );
 };
 
-export default Admin;
+export default Reviewer;

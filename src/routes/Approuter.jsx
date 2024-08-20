@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import Admin from "../pages/Admin";
-import Advisor from "../pages/Advisore";
-import Reviewer from "../pages/Reviewer";
+import LoginPage from "../components/auth/LoginPage";
+import Admin from "../components/admin/Admin";
+import Advisor from "../components/advisor/Advisore";
+import Reviewer from "../components/reviewer/Reviewer";
+// import Reviewer from "../components/reviewer/Reviewer";
 
 const Approuter = () => {
   return (

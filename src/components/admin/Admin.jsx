@@ -1,20 +1,30 @@
 import { useState } from "react";
-import { IoMdMail } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
-import Header from "../components/common/Header";
-import Inbox from "../components/advisor/Inbox";
-import { FaBusinessTime } from "react-icons/fa";
-import ReviewsTime from "../components/advisor/ReviewsTime";
+import { IoMdMail, IoMdPeople } from "react-icons/io";
+import { MdGroups } from "react-icons/md";
+import { SiGooglemeet } from "react-icons/si";
+import { IoPersonAdd } from "react-icons/io5";
+import Advisor from "./pages/advisor/Advisors";
+import Reviewer from "./pages/reviewer/Reviewer";
+import AddStaff from "./pages/add_staff/Addstaff";
+import Meeting from "./pages/meetings/Meetings";
+import Inbox from "../advisor/pages/Inbox";
+import Header from "../common/Header";
 
 
 
-const Advisor = () => {
-  const [open, setOpen] = useState(true);
+
+
+const Admin = () => {
+  const [open, setOpen] = useState(false);
   const iconSize = 24;
   const { rout } = useParams();
   const Data = [
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
-    { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
+    { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
+    { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
+    { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
+    { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
   ];
   
 
@@ -63,7 +73,7 @@ const Advisor = () => {
         </div>
         <ul className="pt-6">
           {Data.map((data, index) => (
-            <Link key={index} to={`/advisor/${data.url}`}>
+            <Link key={index} to={`/admin/${data.url}`}>
               {" "}
               <li
                 key={index}
@@ -84,22 +94,21 @@ const Advisor = () => {
       </div>
       <div className="h-screen flex-1 w-100 overflow-auto">
       <Header rout={rout} />
-      
-     
-        {rout === "inbox" ? (
-          <Inbox/>
-        ) : rout === "review-time" ? (
-           <ReviewsTime/>
-        ) : rout === "add-new-staff" ? (
-          <h1>Not found the Page </h1>
+        {rout === "advisors" ? (
+         <Advisor/>
+        ) : rout === "reviewers" ? (
+          <Reviewer />
+        ) : rout === "add-staff" ? (
+          <AddStaff />
         ) :rout === 'meeting'? (
-          <h1>Not found the Page </h1>
-        ): rout=== '' ?(
-          <h1>Not found the Page </h1>
+          <Meeting/>
+        ): rout=== 'inbox' ?(
+          <Inbox/>
         ):''}
+        
       </div>
     </div>
   );
 };
 
-export default Advisor;
+export default Admin;

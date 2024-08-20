@@ -86,7 +86,7 @@ const Inbox = () => {
   };
 
   return (
-    <div className="p-4  w-full h-[85vh] overflow-auto">
+    <div className="p-4  w-full h-screen overflow-auto">
       {messages.map((message) => (
         <InboxMessage
           key={message.id}
