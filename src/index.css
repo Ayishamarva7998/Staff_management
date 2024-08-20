@@ -72,3 +72,25 @@ button:focus-visible {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* For Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  width: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent; 
+  width: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+  width: 0px;
+}
+
