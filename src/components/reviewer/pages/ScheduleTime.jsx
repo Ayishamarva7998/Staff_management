@@ -156,7 +156,9 @@ const ScheduleTime = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {currentTimes.map((time) => (
               <tr key={time._id} className="hover:bg-gray-100">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{time.date}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  {new Date(time.date).toLocaleDateString('en-GB')}
+</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{time.time}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {time.available ? 'Available' : 'Booked'}

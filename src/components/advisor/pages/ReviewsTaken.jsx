@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { allbookings, reviewcount } from '../../../api/staff_api';
+import { allbookings,setAuthToken, reviewcount } from '../../../api/staff_api';
 
 const ReviewsTaken = () => {
   const [reviewers, setReviewers] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+  
+    } else {
+      navigate('/');
+    }
     const fetchBookings = async () => {
       try {
         const response = await allbookings(); // Fetch bookings from API
-        console.log(response.data);
         const bookings = response.data;
 
         // Group bookings by reviewer, ensuring the booking and reviewer exist
@@ -93,20 +98,24 @@ const ReviewsTaken = () => {
                   booking.reviewer_accepted ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
                 }`}
               >
-                <p className="text-gray-700">
-                  <strong>Date:</strong> {new Date(booking.timeslot.date).toLocaleDateString()}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Time:</strong> {booking.timeslot.time}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Description:</strong> {booking.timeslot.description}
-                </p>
+                {booking.timeslot && (
+                  <>
+                    <p className="text-gray-700">
+                      <strong>Date:</strong> {new Date(booking.timeslot.date).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Time:</strong> {booking.timeslot.time}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Description:</strong> {booking.timeslot.description}
+                    </p>
+                  </>
+                )}
                 <p className="text-gray-700">
                   <strong>Status:</strong> {booking.reviewer_accepted ? 'Accepted' : 'Pending'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Paid Status:</strong> {booking.reviewer.paymentStatus ? "Paid" : "Unpaid"}
+                  <strong>Paid Status:</strong> {booking.reviewer.paymentStatus ? 'Paid' : 'Unpaid'}
                 </p>
                 {booking.reviewer_accepted && !booking.advisor_accepted && (
                   <button

@@ -5,10 +5,10 @@ import { IoMdMail } from "react-icons/io";
 import { SiGooglemeet } from "react-icons/si";
 import { FaCalendarTimes, FaMoneyCheckAlt } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
-import Feestable from "./pages/Feestable";
 import BookingTimes from "./pages/BookingTimes";
 import ScheduleTime from "./pages/ScheduleTime";
 import Inbox from "./pages/Inbox";
+import ReviewStatus from "./pages/ReviewStatus";
 
 const Reviewer = () => {
   const { rout } = useParams();
@@ -20,7 +20,7 @@ const Reviewer = () => {
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox",   },
     { title: "Schedule Time", icon: <FaCalendarTimes size={iconSize} />, url: "booking-time" ,gap: true},
     { title: "Work Time", icon: <MdWorkHistory  size={iconSize} />, url: "work-time" },
-    { title: "Fees Table", icon: <FaMoneyCheckAlt  size={iconSize} />, url: "fees-table",gap:true },
+    { title: "Review Status", icon: <FaMoneyCheckAlt  size={iconSize} />, url: "review-status",gap:true },
   ];
   return (
     <div className="flex">
@@ -94,8 +94,8 @@ const Reviewer = () => {
          <ScheduleTime/>
         ) : rout === "work-time" ? (
           <BookingTimes/>
-        ) :rout === 'fees-table'? (
-          <Feestable />
+        ) :rout === 'review-status'? (
+          <ReviewStatus />
         ): ''}
       </div>
     </div>

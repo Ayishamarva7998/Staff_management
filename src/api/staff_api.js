@@ -39,5 +39,8 @@ export const allbookings = ()=>api.get('/allbooking');
 export const acceptBooking = (id)=>api.post(`/acceptBooking/${id}`);
 
 export const reviewcount = (reviewerId)=>api.post(`/reviewcount/${reviewerId}`);
+// for  total reviews in reviewer page
+
+export const totalreviews = (id)=>api.get(`/totalreviews/${id}`);
 
 export default api;
