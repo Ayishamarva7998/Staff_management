@@ -1,16 +1,9 @@
-import { useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { IoSettings } from 'react-icons/io5';
 import { Menu } from '@headlessui/react'; // Import Headless UI Menu components
+import Profile from './Profile';
 
-const menuOptions = [
-  { name: 'Your Profile', href: '#'  },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#', action: () => { 
-    // Clear local storage and redirect
-    localStorage.clear(); 
-    window.location.href = '/'; 
-  }}
-];
+
 
 function formatRout(rout) {
   return rout
@@ -19,11 +12,40 @@ function formatRout(rout) {
     .join(' ');
 };
 
+
+
 export default function Header({rout}) {
   
+
   const formattedRout = formatRout(rout);
-  
-  return (
+   
+  const [isProfileModalOpen, setIsProfileModalOpen]=useState(false);
+
+  useEffect(()=>{
+    document.title = `${rout}` || 'staff management';
+  },[rout]);
+
+
+  const openProfileModal = () => setIsProfileModalOpen(true);
+  const closeProfileModal = () => setIsProfileModalOpen(false);
+
+
+  const menuOptions = [
+    { 
+      name: 'Your Profile', 
+      href: '#',
+      action: () => { 
+        openProfileModal(); // Open the profile modal
+      }
+    },
+    { name: 'Sign out', href: '#', action: () => { 
+      // Clear local storage and redirect
+      localStorage.clear(); 
+      window.location.href = '/'; 
+    }}
+  ];
+
+  return (<>
     <header className="bg-white text-dark-gray shadow-md">
       <nav className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">       
         <div className="relative flex h-16 items-center justify-between">
@@ -61,5 +83,9 @@ export default function Header({rout}) {
         </div>
       </nav>
     </header>
+
+{isProfileModalOpen&&  <Profile isOpen={isProfileModalOpen} closeModal={closeProfileModal}/>}
+  
+    </>
   );
 }

@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/auth_api";
-import { setAuthToken } from "../../api/admin_api";
+import { setAuthToken } from "../../api/common_api";
 
 const validationSchema = Yup.object({
   email: Yup.string()

@@ -5,7 +5,7 @@ const api = axios.create({
     baseURL: 'http://localhost:4500/api/admin',
 });
 
-export const setAuthToken = () => {
+export const setAdminAuth = () => {
     const token = localStorage.getItem('token');
     if (token) {
         api.defaults.headers.common['Authorization'] = ` ${token}`;
@@ -19,6 +19,8 @@ export const createAdmin = (adminData) => api.post('/adds', adminData);
 
 // API call to update admin password
 export const updateAdminPassword = (adminId, passwordData) => api.put(`/${adminId}`, passwordData);
+
+
 
 // API call to add a staff member
 export const addStaff = (staffData) => api.post('/staff', staffData);
@@ -53,5 +55,13 @@ export const getallstaffs = ()=>api.get('/staffs');
 
 export const updatestaff = (id,values)=>api.patch(`/update/${id}`,values);
 export const deletestaff = (id)=>api.delete(`/delete/${id}`);
+
+export const addstack = (id,stack)=>api.post(`stack/${id}`,stack);
+export const deletestack = (id,stack)=>api.delete(`stack/${id}`,{ params: { stack }});
+
+
+export const addbatch = (id,batch)=>api.post(`batch/${id}`,batch);
+export const deletebatch = (id,batch)=>api.delete(`batch/${id}`,{ params: { batch }});
+
 
 

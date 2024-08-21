@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import AdvisorDetails from "./AdvisorDetails";
-import { setAuthToken, viewAdvisors } from "../../../../api/admin_api";
+import { setAdminAuth, viewAdvisors } from "../../../../api/admin_api";
 const rowsPerPage = 6;
 
 const Advisor = () => {
@@ -27,7 +27,7 @@ const Advisor = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setAuthToken();
+      setAdminAuth();
       fetchAdvisors();
     } else {
       nav("/");
