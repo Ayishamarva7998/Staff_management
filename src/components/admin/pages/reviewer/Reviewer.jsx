@@ -1,50 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { setAuthToken, viewReviewers } from '../../../../api/admin_api';
-import Reviewerdetails from './ReviewerDetails'
+import React, { useEffect, useState } from "react";
+import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+
+import { setAdminAuth, viewReviewers } from "../../../../api/admin_api";
+import Reviewerdetails from "./ReviewerDetails";
 const rowsPerPage = 6;
 
 const Reviewer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [reviewers, setReviewers] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
 
-
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    stack: '',
-    reviewCash: '',
-    totalReview: '',
-    totalAmount: ''
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const nav =useNavigate();
+  const nav = useNavigate();
 
   // Filter reviewers based on the search term
-  const filteredReviewers = reviewers.filter(reviewer =>
-    reviewer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    reviewer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredReviewers = reviewers.filter(
+    (reviewer) =>
+      reviewer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reviewer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredReviewers.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
-  const currentData = filteredReviewers.slice(startIndex, startIndex + rowsPerPage).map(item => {
-    const totalAmount = item.hire * (item.count );
- 
-    return { ...item, totalAmount };
-  });
+  const currentData = filteredReviewers
+    .slice(startIndex, startIndex + rowsPerPage)
+    .map((item) => {
+      const totalAmount = item.hire * item.count;
+
+      return { ...item, totalAmount };
+    });
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -52,26 +39,6 @@ const Reviewer = () => {
 
   const handleDetailsClick = (reviewer) => {
     setSelectedReviewer(reviewer);
-    setFormData(reviewer); // Set form data to current reviewer's details
-
-  };
-
- 
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here (e.g., update the reviewer data)
-    console.log('Updated Reviewer:', formData);
-    setSelectedReviewer(formData); // Update the selected reviewer with the new data
-
   };
 
   const fetchReviewers = async () => {
@@ -80,21 +47,20 @@ const Reviewer = () => {
       setReviewers(response.data);
     } catch (error) {
       console.log(error);
-      setError('Failed to fetch reviewer');
+      setError("Failed to fetch reviewer");
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      setAuthToken();
+      setAdminAuth();
       fetchReviewers();
     } else {
-      nav('/');
+      nav("/");
     }
   }, [selectedReviewer]);
- 
-  
+
   return (
     <div className="container mx-auto p-4 overflow-auto">
       <div className="flex justify-between items-center mb-4">
@@ -111,33 +77,67 @@ const Reviewer = () => {
         <table className="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">#</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Phone Number</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Stack</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Review Cash</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Review</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Total Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Details</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                #
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Phone Number
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Stack
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Review Cash
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Total Review
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Total Amount
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                Details
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentData.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-100">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1 + startIndex}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.phone}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> {" "}
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {index + 1 + startIndex}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.phone}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {" "}
                   {Array.isArray(item.stack)
                     ? item.stack.join(", ")
-                    : item.stack}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.hire || 0}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.count || 0}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.totalAmount || 0}</td>
+                    : item.stack}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.hire || 0}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.count || 0}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.totalAmount || 0}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
-                 <button
+                  <button
                     onClick={() => handleDetailsClick(item)}
                     className="hover:underline"
                   >
@@ -150,43 +150,40 @@ const Reviewer = () => {
         </table>
       </div>
       {totalPages > 1 && (
-  <div className="mt-6 flex justify-center sm:justify-end gap-3 items-center">
-    <button
-      onClick={() => handlePageChange(currentPage - 1)}
-      disabled={currentPage === 1}
-      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
-    >
-      <IoMdArrowBack size={20} />
-    </button>
-    {[...Array(totalPages).keys()].map((page) => (
-      <button
-        key={page}
-        onClick={() => handlePageChange(page + 1)}
-        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg ${
-          currentPage === page + 1
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-        }`}
-      >
-        {page + 1}
-      </button>
-    ))}
-    <button
-      onClick={() => handlePageChange(currentPage + 1)}
-      disabled={currentPage === totalPages}
-      className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
-    >
-      <IoMdArrowForward size={20} />
-    </button>
-  </div>
-)}
-
-
-
+        <div className="mt-6 flex justify-center sm:justify-end gap-3 items-center">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+          >
+            <IoMdArrowBack size={20} />
+          </button>
+          {[...Array(totalPages).keys()].map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page + 1)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg ${
+                currentPage === page + 1
+                  ? "bg-blue-500 text-white hover:bg-blue-600"
+                  : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="p-2 bg-gray-300 text-gray-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-lg"
+          >
+            <IoMdArrowForward size={20} />
+          </button>
+        </div>
+      )}
 
       {selectedReviewer && (
         <Reviewerdetails
-        selectedReviewer={selectedReviewer}
+          selectedReviewer={selectedReviewer}
           setSelectedReviewer={setSelectedReviewer}
         />
       )}

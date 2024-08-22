@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import Select from "react-select";
-import { addStaff, setAuthToken } from "../../../../api/admin_api";
+import { addStaff, setAdminAuth } from "../../../../api/admin_api";
 
 
 const AddStaff = () => {
@@ -94,7 +94,7 @@ const AddStaff = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setAuthToken();
+      setAdminAuth();
     } else {
       nav("/");
     }
