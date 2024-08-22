@@ -15,4 +15,7 @@ export const setAuthToken = () => {
     }
 };
 
-export const getIdfromData = (id) => api.get(`/profile/${id}`);
+export const getDatafromId  = (id) => api.get(`/profile/${id}`);
+
+
+export const updatePassword = (Id, passwordData) => api.put(`/password/${Id}`, passwordData);

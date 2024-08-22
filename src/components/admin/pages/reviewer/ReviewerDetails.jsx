@@ -204,7 +204,7 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }
           selectedReviewer={selectedReviewer}
           setSelectedReviewer={setSelectedReviewer}
           isEditModalOpen={isEditModalOpen}
-          // closeEditModal={closeEditModal}
+          closeEditModal={closeEditModal}
         />
       )}
     </>

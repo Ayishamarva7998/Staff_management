@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { getIdFromToken } from "../../services/authService";
-import { getIdfromData, setAuthToken } from "../../api/common_api";
+import { getDatafromId, setAuthToken, updatePassword } from "../../api/common_api";
 import { useNavigate } from "react-router-dom";
 import {
   FiUser,
@@ -15,6 +15,10 @@ import AddStack from "../admin/pages/admin/AddStack";
 import DeleteDialog from "../admin/pages/admin/DeleteDialog";
 import { deletebatch, deletestack, setAdminAuth } from "../../api/admin_api";
 import toast from "react-hot-toast";
+import UpdatePasswordModal from "./UpdatePasswordModal";
+import { RingLoader } from "react-spinners";
+import { FaCalendarAlt, FaCheckCircle, FaEnvelope, FaPhone, FaTimesCircle, FaUserTie } from "react-icons/fa";
+import { MdAdminPanelSettings } from "react-icons/md";
 
 const Profile = ({ isOpen, closeModal }) => {
   const [data, setData] = useState(null);
@@ -23,6 +27,10 @@ const Profile = ({ isOpen, closeModal }) => {
   const [isBatchDialogOpen, setIsBatchDialogOpen] = useState(false);
   const [isStackDialogOpen, setIsStackDialogOpen] = useState(false);
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isUpdatePass,setIsUpdatePass]=useState(false);
 
   const [deleteItem, setDeleteItem] = useState({ item: "", type: "" });
 
@@ -36,15 +44,21 @@ const Profile = ({ isOpen, closeModal }) => {
     setDeleteItem({ item, type });
     setIsDeleteDialog((prev) => !prev);
   };
+  const toggleUpdatepassDialog = () => {
+    setIsUpdatePass((prev) => !prev);
+  };
 
   const fetchProfile = async () => {
+    setIsLoading(true);
     try {
-      const adminId = getIdFromToken();
-      const response = await getIdfromData(adminId);
+      const adminId = await getIdFromToken();
+      const response = await getDatafromId(adminId);
       setData(response.data);
       setRole(response?.data?.role);
     } catch (error) {
       console.log("Profile fetching error", error);
+    }finally {
+      setIsLoading(false); 
     }
   };
 
@@ -119,22 +133,30 @@ const Profile = ({ isOpen, closeModal }) => {
                           as="h3"
                           className="text-lg leading-6 font-medium text-gray-900"
                         >
-                          {data?.name || ""}
+                           {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <RingLoader color="#4A90E2" size={60} />
+                            </div>
+                          ) : (
+                            data?.name || ""
+                          )}
                         </Dialog.Title>
 
                         {role === "admin" && (
                           <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-sm h-[400px] overflow-auto">
-                            <div className="mb-4">
-                              <p className="text-base font-medium text-gray-700">
-                                Admin Details
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Email:{" "}
-                                <span className="font-medium text-gray-800">
-                                  {data?.email || ""}
-                                </span>
-                              </p>
-                            </div>
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-4">
+      <div className="flex-shrink-0">
+        <MdAdminPanelSettings className="text-6xl text-indigo-600" />
+      </div>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">{data?.name || "Admin"}</h2>
+      </div>
+    </div>
+                           
+                            <div className="flex items-center space-x-3 mb-4">
+        <FaEnvelope className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700">{data?.email || "N/A"}</p>
+      </div>
 
                             <div className="mb-4">
                               <p className="text-sm font-medium text-gray-700 flex justify-between items-center">
@@ -211,28 +233,79 @@ const Profile = ({ isOpen, closeModal }) => {
                           </div>
                         )}
 
-                        {role === "reviewer" && (
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500">
-                              Email: {data?.email || ""}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Phone: +{data?.phone || ""}
-                            </p>
-                            Reviewer
-                          </div>
-                        )}
-                        {role === "advisor" && (
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500">
-                              Email: {data?.email || ""}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Phone: +{data?.phone || ""}
-                            </p>
-                            Advisor
-                          </div>
-                        )}
+{role === "reviewer" && (
+  <div className="p-5">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+      <div className="flex-shrink-0">
+        <FaUserTie className="text-6xl text-indigo-600" />
+      </div>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">{data?.name || "Reviewer"}</h2>
+        <p className="text-sm text-gray-600">Reviewer</p>
+      </div>
+    </div>
+    <div className="mt-4 space-y-4">
+      <div className="flex items-center space-x-3">
+        <FaEnvelope className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700">{data?.email || "N/A"}</p>
+      </div>
+      <div className="flex items-center space-x-3">
+        <FaPhone className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700">+{data?.phone || "N/A"}</p>
+      </div>
+    </div>
+    <div className="mt-6">
+      <h3 className="text-xl font-semibold text-gray-900">Stack</h3>
+      <ul className=" flex flex-wrap gap-4 pl-0 ">
+        {data?.stack && data.stack.length > 0 ? (
+          data.stack.map((item, index) => (
+            <li key={index} className="text-sm text-gray-700 flex items-start before:content-['•'] before:text-gray-500 before:mr-1">{item}</li>
+          ))
+        ) : (
+          <li className="text-sm text-gray-500">No stack information available</li>
+        )}
+      </ul>
+    </div>
+  </div>
+)}
+
+
+{role === "advisor" && (
+  <div className="p-5">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+      <div className="flex-shrink-0">
+        <FaUserTie className="text-6xl text-indigo-600" />
+      </div>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">{data?.name || "Advisor"}</h2>
+        <p className="text-sm text-gray-600">Advisor</p>
+      </div>
+    </div>
+    <div className="mt-4 space-y-4">
+      <div className="flex items-center space-x-3">
+        <FaEnvelope className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700">{data?.email || "N/A"}</p>
+      </div>
+      <div className="flex items-center space-x-3">
+        <FaPhone className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700">+{data?.phone || "N/A"}</p>
+      </div>
+    </div>
+    <div className="mt-6">
+      <h3 className="text-xl font-semibold text-gray-900">Batch</h3>
+      <ul className="flex flex-wrap gap-4 pl-0">
+        {data?.batch && data.batch.length > 0 ? (
+          data.batch.map((item, index) => (
+            <li key={index} className="text-sm text-gray-700 flex items-start before:content-['•'] before:text-gray-500 before:mr-1">{item}</li>
+          ))
+        ) : (
+          <li className="text-sm text-gray-500">No batch information available</li>
+        )}
+      </ul>
+    </div>
+  </div>
+)}
+
                       </div>
                     </div>
                   </div>
@@ -240,7 +313,7 @@ const Profile = ({ isOpen, closeModal }) => {
                     <button
                       type="button"
                       className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={closeModal}
+                      onClick={toggleUpdatepassDialog}
                     >
                       Update Password
                     </button>
@@ -282,6 +355,8 @@ const Profile = ({ isOpen, closeModal }) => {
           type={deleteItem.type}
         />
       )}
+
+      {isUpdatePass&&(<UpdatePasswordModal isOpen={isUpdatePass} onClose={toggleUpdatepassDialog}/>)}
     </>
   );
 };
