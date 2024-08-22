@@ -75,9 +75,7 @@ const AddStaff = () => {
     
     
     try {
-      const response = await addStaff(finalValues);    
-      console.log(response.data);
-        
+      const response = await addStaff(finalValues);           
       toast.success(response.data.message);
       setSelectedBatches([]);
       resetForm();
@@ -85,7 +83,7 @@ const AddStaff = () => {
       toast.error(error.response.data.message);
       console.error("Error adding staff:", error.response.data.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
       setSubmitting(false);
     }
   };

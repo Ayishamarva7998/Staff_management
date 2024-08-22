@@ -17,10 +17,6 @@ export const setAdminAuth = () => {
 // API call to create an admin
 export const createAdmin = (adminData) => api.post('/adds', adminData);
 
-// API call to update admin password
-export const updateAdminPassword = (adminId, passwordData) => api.put(`/${adminId}`, passwordData);
-
-
 
 // API call to add a staff member
 export const addStaff = (staffData) => api.post('/staff', staffData);
