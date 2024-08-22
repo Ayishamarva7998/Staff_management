@@ -3,8 +3,10 @@ import { IoMdMail } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
 import Header from "../common/Header";
 import { FaBusinessTime } from "react-icons/fa";
+import { FaCalendarCheck } from "react-icons/fa";
 import Inbox from "./pages/Inbox";
 import ReviewsTime from "./pages/ReviewsTime";
+import ReviewsTaken from "./pages/ReviewsTaken";
 
 
 
@@ -15,6 +17,7 @@ const Advisor = () => {
   const Data = [
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
     { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
+    { title: "Review Booked", icon: <FaCalendarCheck size={iconSize} />, url: "review-booked",gap:true },
   ];
   
 
@@ -90,8 +93,8 @@ const Advisor = () => {
           <Inbox/>
         ) : rout === "review-time" ? (
         <ReviewsTime/>
-        ) : rout === "add-new-staff" ? (
-          <h1>Not found the Page </h1>
+        ) : rout === "review-booked" ? (
+          <ReviewsTaken/>
         ) :rout === 'meeting'? (
           <h1>Not found the Page </h1>
         ): rout=== '' ?(

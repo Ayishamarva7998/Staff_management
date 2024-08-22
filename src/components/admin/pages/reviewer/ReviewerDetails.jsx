@@ -10,12 +10,11 @@ import EditReviwer from "./EditReviwer";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
+const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const openEditModal = () => setIsEditModalOpen(true);
   const closeEditModal = () => setIsEditModalOpen(false);
-
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -30,18 +29,19 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
       document.body.appendChild(script);
     });
   };
+
   const handlePaymentClick = async () => {
     const scriptLoaded = await loadRazorpayScript();
-  
+
     if (!scriptLoaded) {
       toast.error("Razorpay SDK failed to load. Are you online?");
       return;
     }
-  
+
     try {
       const orderResult = await axios.post(`http://localhost:4500/api/admin/payment/${selectedReviewer._id}`);
       const { amount, id: razorpay_order_id, currency } = orderResult.data;
-  
+
       const options = {
         key: "rzp_test_3YFqc3qjVhg3aK", // Enter the Key ID generated from the Dashboard
         amount: amount.toString(),
@@ -50,32 +50,26 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
         description: "Test Transaction",
         order_id: razorpay_order_id,
         handler: async function (response) {
-          // Prepare payment details for verification
           const paymentDetails = {
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
           };
-  
+
           try {
-            // Send payment details to backend for verification
             const verifypayments = await axios.post('http://localhost:4500/api/admin/verifypayment', paymentDetails);
-  
+
             if (verifypayments.status === 200) {
-              console.log('Payment verified successfully');
-              // Optionally, update the UI or notify the user
-
-
-
-
-
+              toast.success('Payment verified successfully');
+              setSelectedReviewer(null);  // Close the details modal
+              setShowTable(true);  // Show the table view
             } else {
               console.error('Payment verification failed');
-              // Handle verification failure
+              toast.error('Payment verification failed');
             }
           } catch (error) {
             console.error('Error while verifying payment:', error);
-            // Handle network or server errors
+            toast.error('Error while verifying payment');
           }
         },
         prefill: {
@@ -90,19 +84,16 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
           color: "#3399cc",
         },
       };
-  
+
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
-  
+
     } catch (error) {
       console.error("Error while creating Razorpay order:", error);
       toast.error("There was an error processing your payment. Please try again.");
     }
   };
 
-
-
-  
   const totalAmount = selectedReviewer?.totalAmount || 0;
   return (
     <>
@@ -143,7 +134,7 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
                   { label: "Total Review", value: selectedReviewer?.count },                  
                   {
                     label: "Payment Status",
-                    value: "paymentStatus",
+                    value: selectedReviewer?.paymentStatus ? "Paid" : "Unpaid"
                   },
                   {
                     label: "Stack",
@@ -213,7 +204,7 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer }) => {
           selectedReviewer={selectedReviewer}
           setSelectedReviewer={setSelectedReviewer}
           isEditModalOpen={isEditModalOpen}
-          closeEditModal={closeEditModal}
+          // closeEditModal={closeEditModal}
         />
       )}
     </>

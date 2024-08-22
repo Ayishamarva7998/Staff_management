@@ -3,8 +3,11 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { FiCalendar, FiClock, FiMail, FiUsers, FiLayers, FiClipboard, FiInfo, FiCheckCircle, FiX } from 'react-icons/fi';
-import { getbookings, setAuthToken } from '../../../api/staff_api';
+
+import { getbookings, setAuthToken,acceptBooking} from '../../../api/staff_api';
 import { getIdFromToken } from '../../../services/authService';
+
+
 
 const initialBookings = [
   { id: 1, date: '2024-08-10', time: '10:00 AM', studentEmail: 'student1@example.com', week: 'Week 1', stack: 'Frontend' },
@@ -17,6 +20,7 @@ const initialBookings = [
   { id: 8, date: '2024-08-14', time: '11:00 AM', studentEmail: 'student8@example.com', week: 'Week 4', stack: 'Backend' },
   // Add more dummy data as needed
 ];
+
 
 const rowsPerPage = 5;
 
@@ -32,9 +36,9 @@ const BookingTime = () => {
   };
 
   const filteredBookings = selectedDate 
-  ? bookings.filter(booking => {
-      return booking.timeslot.date === selectedDate;
-    })
+
+  ? bookings.filter(booking => booking.timeslot.date === selectedDate)
+
   : bookings;
 
   const totalPages = Math.ceil(filteredBookings.length / rowsPerPage);
@@ -54,27 +58,40 @@ const BookingTime = () => {
   };
 
 
-  const fetchBookings = async ()=>{
-   try {
-    const id = getIdFromToken();
-    const response = await getbookings(id);
-    console.log(response.data);
-    
-    setBookings(response?.data)
-   } catch (error) {
-    console.log('error ferching',error);    
-   }
-  }
-  const nav =useNavigate();
+  
+  const fetchBookings = async () => {
+    try {
+      const id = getIdFromToken();
+      const response = await getbookings(id);
+      console.log(response.data);
+      setBookings(response?.data);
+    } catch (error) {
+      console.log('Error fetching bookings', error);    
+    }
+  };
+  
+  const nav = useNavigate();
+  
   useEffect(() => {
-    const token= localStorage.getItem('token');
-    if(token){
+    const token = localStorage.getItem('token');
+    if (token) {
       setAuthToken(); 
       fetchBookings();
-   }else{
-     nav('/'); 
-   }
-   }, []);
+    } else {
+      nav('/'); 
+    }
+  }, []);
+  
+  const handleAllow = async (id) => {
+    
+    try {
+      await acceptBooking(id);
+      fetchBookings();
+      // Update booking status in state or refetch bookings if needed
+    } catch (error) {
+      console.log('Error allowing booking:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -95,7 +112,10 @@ const BookingTime = () => {
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Student Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Week</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Stack</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Details</th>
+
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">allow</th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
+
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -108,6 +128,16 @@ const BookingTime = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.stack}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
                   <button
+
+                    onClick={() => handleAllow(booking._id)}
+                    className="mr-4 px-2 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                    Allow
+                  </button>
+                      </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
+                  <button
+
                     onClick={() => handleBookingClick(booking)}
                     className="hover:underline"
                   >
@@ -151,7 +181,9 @@ const BookingTime = () => {
       )}
 
       {selectedBooking && (
-          <Dialog open={true} onClose={closeDialog} className="relative z-10">
+
+        <Dialog open={true} onClose={closeDialog} className="relative z-10">
+
           <div className="fixed inset-0 bg-gray-700 bg-opacity-50 transition-opacity" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <DialogPanel className="bg-white rounded-lg shadow-xl max-w-md w-full mx-auto p-6">
@@ -164,7 +196,7 @@ const BookingTime = () => {
                 </button>
               </div>
               <div className="space-y-4 text-gray-700">
-                {/* Time and Date at the Top */}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <FiClock className="mr-3 text-gray-500" />
@@ -179,8 +211,6 @@ const BookingTime = () => {
                   </div>
                   <span>{selectedBooking?.timeslot?.date || 'N/A'}</span>
                 </div>
-    
-                {/* Information Section */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <FiMail className="mr-3 text-gray-500" />
@@ -195,8 +225,7 @@ const BookingTime = () => {
                   </div>
                   <span>{selectedBooking?.advisor?.email || 'N/A'}</span>
                 </div>
-    
-                {/* Additional Details */}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <FiUsers className="mr-3 text-gray-500" />
@@ -207,19 +236,26 @@ const BookingTime = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <FiLayers className="mr-3 text-gray-500" />
-                    <strong>Stack:</strong>
-                  </div>
-                  <span>{selectedBooking?.stack || 'N/A'}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <FiClipboard className="mr-3 text-gray-500" />
+
                     <strong>Week:</strong>
                   </div>
                   <span>{selectedBooking?.week || 'N/A'}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
+{/* <<<<<<< HEAD
+                    <FiClipboard className="mr-3 text-gray-500" />
+                    <strong>Stack:</strong>
+                  </div>
+                  <span>{selectedBooking?.stack || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={closeDialog}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+======= */}
                     <FiInfo className="mr-3 text-gray-500" />
                     <strong>Description:</strong>
                   </div>
@@ -240,6 +276,7 @@ const BookingTime = () => {
                   className="flex items-center px-4 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors"
                 >
                   <FiX className="mr-2" />
+
                   Close
                 </button>
               </div>

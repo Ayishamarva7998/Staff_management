@@ -7,7 +7,8 @@ import * as Yup from 'yup';
 import { IoMdPeople } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { setAuthToken, timeslot } from '../../../api/staff_api';
+import { bookings, setAuthToken, timeslot } from '../../../api/staff_api';
+import { getIdFromToken } from '../../../services/authService';
 
 // Timeslot data
 const timeslots = [
@@ -79,19 +80,19 @@ const ReviewsTime = () => {
   const handleSubmit = async (values) => {
     try {
       // const advisorId = localStorage.getItem('worker_id');
-    const token = localStorage.getItem('token');
-    const id = token._id;
-    console.log(id);
+const advisorId=getIdFromToken();
+console.log(advisorId,"id");
     
     if (!advisorId) {
       throw new Error('Advisor ID not found');
     }
       const response = await bookings({advisorId:advisorId, timeslotId: selectedSlot._id, reviewerId: selectedSlot.reviewer ? selectedSlot.reviewer._id : null, email:values.email, batch:values.batch, stack:values.stack, week:values.week, comments:values.comments});
+      console.log(response.data,"errorsss");
       toast.success(response.data.message);
       fetchTimeslots();
     } catch (error) {
       console.error('Booking failed:', error.response.data.message);
-      toast.error(error.response.data.message)
+      toast.error(error.response.message)
     }
     handleCloseModal();
   };
