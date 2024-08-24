@@ -4,12 +4,14 @@ import { IoMdMail, IoMdPeople } from "react-icons/io";
 import { MdGroups } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import { IoPersonAdd } from "react-icons/io5";
+import { FaMoneyCheck } from "react-icons/fa";
 import Advisor from "./pages/advisor/Advisors";
 import Reviewer from "./pages/reviewer/Reviewer";
 import AddStaff from "./pages/add_staff/Addstaff";
 import Meeting from "./pages/meetings/Meetings";
 import Inbox from "../advisor/pages/Inbox";
 import Header from "../common/Header";
+import Payments from "./pages/payments/payment";
 
 
 
@@ -23,6 +25,7 @@ const Admin = () => {
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
     { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
     { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
+    { title: "Payment History", icon: <FaMoneyCheck size={iconSize} />, url: "payments",gap:true },
     { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
     { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
   ];
@@ -98,6 +101,8 @@ const Admin = () => {
          <Advisor/>
         ) : rout === "reviewers" ? (
           <Reviewer />
+        ) : rout === "payments" ? (
+            <Payments />
         ) : rout === "add-staff" ? (
           <AddStaff />
         ) :rout === 'meeting'? (

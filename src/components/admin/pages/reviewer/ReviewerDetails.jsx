@@ -68,7 +68,7 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }
               toast.error('Payment verification failed');
             }
           } catch (error) {
-            console.error('Error while verifying payment:', error);
+            // console.error('Error while verifying payment:', error);
             toast.error('Error while verifying payment');
           }
         },
