@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/auth_api";
-import { setAuthToken } from "../../api/common_api";
+import { setcommonToken } from "../../api/common_api";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -33,7 +33,7 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
       
       // localStorage.setItem("worker_id", response.data._id);
-      setAuthToken(token);
+      setcommonToken(token);
       console.log("Login successful:", response.data);
       toast.success("Login successful");
       if (values.position === "admin") {

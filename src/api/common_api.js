@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 
-export const setAuthToken = () => {
+export const setcommonToken = () => {
     const token = localStorage.getItem('token');
     if (token) {
         api.defaults.headers.common['Authorization'] = ` ${token}`;
@@ -19,3 +19,7 @@ export const getDatafromId  = (id) => api.get(`/profile/${id}`);
 
 
 export const updatePassword = (Id, passwordData) => api.put(`/password/${Id}`, passwordData);
+
+
+export const getstacks= ()=>api.get('/stacks');
+export const getbatches=()=>api.get('/batches');
