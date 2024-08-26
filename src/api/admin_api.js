@@ -39,6 +39,10 @@ export const searchStaff = (query) => api.get(`/search`, { params: { query } });
 // API call to process payment for a reviewer
 export const processPayment = (paymentId, paymentData) => api.post(`/payment/${paymentId}`, paymentData);
 
+// API call to show all payment history
+
+export const paymentHistory = (id) => api.get(`/paymenhistory/${id}`,);
+
 // API call to create group meetings
 export const createMeeting = (meetingData) => api.post('/meetings', meetingData);
 
