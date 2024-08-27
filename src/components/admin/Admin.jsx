@@ -9,9 +9,9 @@ import Advisor from "./pages/advisor/Advisors";
 import Reviewer from "./pages/reviewer/Reviewer";
 import AddStaff from "./pages/add_staff/Addstaff";
 import Meeting from "./pages/meetings/Meetings";
-import Inbox from "../advisor/pages/Inbox";
 import Header from "../common/Header";
 import Payments from "./pages/payments/payment";
+import AdminInbox from "./pages/inbox/Inbox";
 
 
 
@@ -108,7 +108,7 @@ const Admin = () => {
         ) :rout === 'meeting'? (
           <Meeting/>
         ): rout=== 'inbox' ?(
-          <Inbox/>
+          <AdminInbox/>
         ):''}
         
       </div>

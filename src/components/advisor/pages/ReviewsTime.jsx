@@ -81,13 +81,11 @@ const ReviewsTime = () => {
     try {
       // const advisorId = localStorage.getItem('worker_id');
 const advisorId=getIdFromToken();
-console.log(advisorId,"id");
     
     if (!advisorId) {
       throw new Error('Advisor ID not found');
     }
       const response = await bookings({advisorId:advisorId, timeslotId: selectedSlot._id, reviewerId: selectedSlot.reviewer ? selectedSlot.reviewer._id : null, email:values.email, batch:values.batch, stack:values.stack, week:values.week, comments:values.comments});
-      console.log(response.data,"errorsss");
       toast.success(response.data.message);
       fetchTimeslots();
     } catch (error) {

@@ -109,7 +109,7 @@ const AddStaff = () => {
     { value: "7", label: "Batch 7" },
     { value: "8", label: "Batch 8" }
   ];
-  const stackOption = [
+ const stackOption = [
     { value: "React", label: "React" },
     { value: "Node", label: "Node" },
     { value: "Html", label: "Html" },

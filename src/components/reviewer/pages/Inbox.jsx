@@ -1,32 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { Dialog } from '@headlessui/react';
+import axios from 'axios';
+import { advisorInbox, setAuthToken, viewInbox } from '../../../api/staff_api';
+import { getIdFromToken } from '../../../services/authService';
 
-const InboxMessage = ({ message, onClick }) => {
-  const { sender, content, programDate, time, read } = message;
+const InboxMessage = ({ notification, onClick }) => {
+  const { message, createdAt, status } = notification;
 
   return (
     <div
-      className={`relative p-4 border-b border-gray-200 ${read ? 'bg-gray-50' : 'bg-white'} hover:bg-gray-100 rounded-lg transition duration-300 ease-in-out cursor-pointer`}
-      onClick={() => onClick(message)}
+      className={`relative p-4 border-b border-gray-200 ${status === 'read' ? 'bg-gray-50' : 'bg-white'} hover:bg-gray-100 rounded-lg transition duration-300 ease-in-out cursor-pointer`}
+      onClick={() => onClick(notification)}
     >
       <div className="flex justify-between items-center">
-        <div>
-          <div className="text-lg font-semibold">{sender}</div>
-          <p className="text-gray-700">{content}</p>
-        </div>
+        <div className="text-lg font-semibold">{message}</div>
       </div>
       <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
         <div className="flex items-center">
           <FaCalendarAlt className="mr-1" />
-          <span>{programDate}</span>
+          <span>{new Date(createdAt).toLocaleDateString()}</span>
         </div>
         <div className="flex items-center">
           <FaClock className="mr-1" />
-          <span>{time}</span>
+          <span>{new Date(createdAt).toLocaleTimeString()}</span>
         </div>
       </div>
-      {!read && (
+      {status === 'unread' && (
         <div className="absolute top-0 right-0 mt-2 mr-2 text-xs text-red-500 bg-white px-2 py-1 rounded-full">
           Unread
         </div>
@@ -36,86 +36,82 @@ const InboxMessage = ({ message, onClick }) => {
 };
 
 const Inbox = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'Alice Johnson',
-      content: 'Hi team, please review the latest project update.',
-      programDate: '2024-08-07',
-      time: '09:15 AM',
-      details: 'Detailed information about Alice’s message.',
-      read: false
-    },
-    {
-      id: 2,
-      sender: 'Bob Smith',
-      content: 'Reminder: Our meeting is scheduled for tomorrow at 10 AM.',
-      programDate: '2024-08-06',
-      time: '03:45 PM',
-      details: 'Detailed information about Bob’s reminder.',
-      read: false
-    },
-    {
-      id: 3,
-      sender: 'Carol Davis',
-      content: 'I have uploaded the final version of the report.',
-      programDate: '2024-08-05',
-      time: '11:00 AM',
-      details: 'Detailed information about Carol’s report.',
-      read: false
-    },
-    {
-      id: 4,
-      sender: 'Dave Wilson',
-      content: 'Please complete your feedback on the proposal by the end of the day.',
-      programDate: '2024-08-04',
-      time: '02:30 PM',
-      details: 'Detailed information about Dave’s feedback request.',
-      read: false
+  const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+      fetchNotifications();
+    } else {
+      navigate('/');
     }
-  ]);
+  }, []);
 
-  const [selectedMessage, setSelectedMessage] = useState(null);
+  const fetchNotifications = async () => {
+    try {
+      const id = getIdFromToken();
+      const response = await advisorInbox(id);
+      
+      // Sort notifications: unread first, then by date (latest first)
+      const sortedNotifications = response.data.notifications.sort((a, b) => {
+        if (a.status === 'unread' && b.status !== 'unread') return -1;
+        if (a.status !== 'unread' && b.status === 'unread') return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
 
-  const handleMessageClick = (message) => {
-    // Mark the message as read
-    setMessages(messages.map(msg => 
-      msg.id === message.id ? { ...msg, read: true } : msg
-    ));
-    setSelectedMessage(message);
+      setNotifications(sortedNotifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  const handleNotificationClick = async (notification) => {
+    try {
+      const id = getIdFromToken();
+      await viewInbox(id, notification._id);
+      setNotifications(notifications.map(notif =>
+        notif._id === notification._id ? { ...notif, status: 'read' } : notif
+      ));
+      setSelectedNotification(notification);
+    } catch (error) {
+      console.error('Error updating notification status:', error);
+    }
   };
 
   return (
-    <div className="p-4  w-full h-[85vh] overflow-auto">
-      {messages.map((message) => (
+    <div className="p-4 w-full h-[85vh] overflow-auto">
+      {notifications.map((notification) => (
         <InboxMessage
-          key={message.id}
-          message={message}
-          onClick={handleMessageClick}
+          key={notification._id}
+          notification={notification}
+          onClick={handleNotificationClick}
         />
       ))}
 
-      {selectedMessage && (
-        <Dialog open={!!selectedMessage} onClose={() => setSelectedMessage(null)}>
+      {selectedNotification && (
+        <Dialog open={!!selectedNotification} onClose={() => setSelectedNotification(null)}>
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Dialog.Panel className="bg-white rounded-lg shadow-lg max-w-md mx-auto p-6">
-              <Dialog.Title className="text-xl font-semibold mb-4">{selectedMessage.sender}</Dialog.Title>
-              <p className="mb-4">{selectedMessage.content}</p>
+              <Dialog.Title className="text-xl font-semibold mb-4">
+                {selectedNotification.sender?.name ?? 'admin'}
+              </Dialog.Title>
+              <p className="mb-4">{selectedNotification.message}</p>
               <div className="flex justify-between text-sm text-gray-500 mb-4">
                 <div className="flex items-center">
                   <FaCalendarAlt className="mr-1" />
-                  <span>{selectedMessage.programDate}</span>
+                  <span>{new Date(selectedNotification.createdAt).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center">
                   <FaClock className="mr-1" />
-                  <span>{selectedMessage.time}</span>
+                  <span>{new Date(selectedNotification.createdAt).toLocaleTimeString()}</span>
                 </div>
               </div>
-              <p>{selectedMessage.details}</p>
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                onClick={() => setSelectedMessage(null)}
+                onClick={() => setSelectedNotification(null)}
               >
                 Close
               </button>

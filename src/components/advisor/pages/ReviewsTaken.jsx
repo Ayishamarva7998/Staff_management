@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { allbookings,setAuthToken, reviewcount } from '../../../api/staff_api';
+import { getIdFromToken } from '../../../services/authService';
 
 const ReviewsTaken = () => {
   const [reviewers, setReviewers] = useState([]);
@@ -15,7 +16,9 @@ const ReviewsTaken = () => {
     }
     const fetchBookings = async () => {
       try {
-        const response = await allbookings(); // Fetch bookings from API
+        const id= getIdFromToken()
+        console.log(id,"demo");
+        const response = await allbookings(id); // Fetch bookings from API
         const bookings = response.data;
 
         // Group bookings by reviewer, ensuring the booking and reviewer exist

@@ -58,6 +58,10 @@ const ReviewStatus = () => {
     setSelectedReview(review);
   };
 
+  const handleCloseDialog = () => {
+    setSelectedReview(null);
+  };
+
   return (
     <div className="container mx-auto p-4 overflow-auto">
       <div className="flex justify-end items-center mb-4">
@@ -95,12 +99,12 @@ const ReviewStatus = () => {
             {currentData.map((item, index) => (
               <tr key={item._id} className="hover:bg-gray-100">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1 + startIndex}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.advisor.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.batch}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.stack}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.timeslot.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.timeslot.time}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item?.advisor.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item?.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item?.batch}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item?.stack}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.timeslot?.date}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.timeslot?.time}</td>
                 <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${item.reviewer_accepted ? 'text-green-500' : 'text-red-500'}`}>
                   {item.reviewer_accepted ? 'Accepted' : 'Pending'}
                 </td>
@@ -149,7 +153,7 @@ const ReviewStatus = () => {
         </div>
       )}
 
-      <Dialog open={Boolean(selectedReview)} onClose={() => setSelectedReview(null)} className="relative z-50">
+      <Dialog open={Boolean(selectedReview)} onClose={handleCloseDialog} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel className="max-w-4xl w-full bg-white p-8 rounded-lg shadow-lg border border-gray-200">
@@ -159,35 +163,35 @@ const ReviewStatus = () => {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
-                      { label: 'Advisor Name', type: 'text', value: selectedReview.advisor.name },
-                      { label: 'Student Email', type: 'email', value: selectedReview.email },
-                      { label: 'Batch', type: 'text', value: selectedReview.batch },
-                      { label: 'Stack', type: 'text', value: selectedReview.stack },
-                      { label: 'Review Status', type: 'text', value: selectedReview.reviewer_accepted ? 'Accepted' : 'Pending' },
-                      { label: 'Date', type: 'date', value: selectedReview.timeslot.date },
-                      { label: 'Time', type: 'time', value: selectedReview.timeslot.time },
+                      { label: 'Advisor Name', type: 'text', value: selectedReview?.advisor.name },
+                      { label: 'Student Email', type: 'email', value: selectedReview?.email },
+                      { label: 'Batch', type: 'text', value: selectedReview?.batch },
+                      { label: 'Stack', type: 'text', value: selectedReview?.stack },
+                      { label: 'Review Status', type: 'text', value: selectedReview?.reviewer_accepted ? 'Accepted' : 'Pending' },
+                      { label: 'Date', type: 'date', value: selectedReview?.timeslot.date },
+                      { label: 'Time', type: 'time', value: selectedReview?.timeslot.time },
                     ].map((field) => (
                       <div key={field.label} className="flex flex-col">
-                        <label className="text-sm font-medium text-gray-600">{field.label}</label>
+                        <label className="font-semibold text-gray-700">{field.label}</label>
                         <input
                           type={field.type}
-                          value={field.value}
-                          readOnly
-                          className="mt-1 px-4 py-2 border rounded-md bg-gray-100"
+                          value={field.value || ''}
+                          disabled
+                          className="mt-2 px-4 py-2 border rounded-md bg-gray-100"
                         />
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-end gap-3">
-                    <button
-                      onClick={() => nav('/some-page')} // Change this to the redirect URL
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-lg"
-                    >
-                      Close
-                    </button>
-                  </div>
                 </>
               )}
+              <div className="flex justify-center md:justify-end mt-8 gap-4">
+                <button
+                  className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 transition-all duration-300 shadow-md"
+                  onClick={handleCloseDialog}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </DialogPanel>
         </div>

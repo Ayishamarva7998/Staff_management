@@ -33,7 +33,7 @@ export const bookings = (bookingdetails)=>api.post('/booking',bookingdetails);
 
 export const getbookings = (id)=> api.get(`/reviewer/${id}/bookings`);
 
-export const allbookings = ()=>api.get('/allbooking');
+export const allbookings = (id)=>api.get(`/allbooking/${id}`);
 
 
 export const acceptBooking = (id)=>api.post(`/acceptBooking/${id}`);
@@ -43,4 +43,8 @@ export const reviewcount = (reviewerId)=>api.post(`/reviewcount/${reviewerId}`);
 
 export const totalreviews = (id)=>api.get(`/totalreviews/${id}`);
 
+
+// inbox
+export const advisorInbox = (id)=>api.get(`/inbox/${id}`);
+export const viewInbox = (id)=>api.post(`/inbox/view/${id}`);
 export default api;

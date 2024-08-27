@@ -62,14 +62,14 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }
             if (verifypayments.status === 200) {
               toast.success('Payment verified successfully');
               setSelectedReviewer(null);  // Close the details modal
-              setShowTable(true);  // Show the table view
+              // setShowTable(true);  // Show the table view
             } else {
               console.error('Payment verification failed');
               toast.error('Payment verification failed');
             }
           } catch (error) {
-            // console.error('Error while verifying payment:', error);
-            toast.error('Error while verifying payment');
+            console.error('Error while verifying payment:', error);
+            // toast.error('Error while verifying payment');
           }
         },
         prefill: {
