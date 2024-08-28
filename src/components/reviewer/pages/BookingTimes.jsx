@@ -6,20 +6,8 @@ import { FiCalendar, FiClock, FiMail, FiUsers, FiLayers, FiClipboard, FiInfo, Fi
 
 import { getbookings, setAuthToken,acceptBooking} from '../../../api/staff_api';
 import { getIdFromToken } from '../../../services/authService';
+import { addEventInCalender, setcommonToken } from '../../../api/common_api';
 
-
-
-const initialBookings = [
-  { id: 1, date: '2024-08-10', time: '10:00 AM', studentEmail: 'student1@example.com', week: 'Week 1', stack: 'Frontend' },
-  { id: 2, date: '2024-08-10', time: '11:00 AM', studentEmail: 'student2@example.com', week: 'Week 1', stack: 'Backend' },
-  { id: 3, date: '2024-08-11', time: '02:00 PM', studentEmail: 'student3@example.com', week: 'Week 2', stack: 'Full Stack' },
-  { id: 4, date: '2024-08-12', time: '03:00 PM', studentEmail: 'student4@example.com', week: 'Week 2', stack: 'Frontend' },
-  { id: 5, date: '2024-08-12', time: '04:00 PM', studentEmail: 'student5@example.com', week: 'Week 3', stack: 'Backend' },
-  { id: 6, date: '2024-08-13', time: '09:00 AM', studentEmail: 'student6@example.com', week: 'Week 3', stack: 'Full Stack' },
-  { id: 7, date: '2024-08-14', time: '10:00 AM', studentEmail: 'student7@example.com', week: 'Week 4', stack: 'Frontend' },
-  { id: 8, date: '2024-08-14', time: '11:00 AM', studentEmail: 'student8@example.com', week: 'Week 4', stack: 'Backend' },
-  // Add more dummy data as needed
-];
 
 
 const rowsPerPage = 5;
@@ -32,8 +20,28 @@ const BookingTime = () => {
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
-    setCurrentPage(1); // Reset to first page when date changes
+    setCurrentPage(1); 
   };
+ 
+const addevent = async (Id)=>{
+  setcommonToken();
+ try {
+  const response = await addEventInCalender(Id);
+  
+
+  const eventUrl = response.data?.url;
+
+
+  if (eventUrl) {
+    window.open(eventUrl, '_blank');
+  } else {
+    console.error('No URL found in the response.');
+  }
+
+ } catch (error) {
+  console.log('Event Add error',error);
+ }
+}
 
   const filteredBookings = selectedDate 
 
@@ -72,6 +80,18 @@ const BookingTime = () => {
   
   const nav = useNavigate();
   
+ 
+  
+  const handleAllow = async (id) => {
+    
+    try {
+      await acceptBooking(id);
+      fetchBookings();
+    } catch (error) {
+      console.log('Error allowing booking:', error);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -81,17 +101,6 @@ const BookingTime = () => {
       nav('/'); 
     }
   }, []);
-  
-  const handleAllow = async (id) => {
-    
-    try {
-      await acceptBooking(id);
-      fetchBookings();
-      // Update booking status in state or refetch bookings if needed
-    } catch (error) {
-      console.log('Error allowing booking:', error);
-    }
-  };
 
   return (
     <div className="container mx-auto p-4">
@@ -112,7 +121,8 @@ const BookingTime = () => {
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Student Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Week</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Stack</th>
-
+              
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Add event</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">allow</th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
 
@@ -126,6 +136,16 @@ const BookingTime = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.week}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.stack}</td>
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.stack}</td> */}
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
+                  <button
+
+                    onClick={()=>addevent(booking._id)}
+                    className="mr-4 px-2 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                    Add event
+                  </button>
+                      </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500 cursor-pointer">
                   <button
 
@@ -243,19 +263,6 @@ const BookingTime = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-{/* <<<<<<< HEAD
-                    <FiClipboard className="mr-3 text-gray-500" />
-                    <strong>Stack:</strong>
-                  </div>
-                  <span>{selectedBooking?.stack || 'N/A'}</span>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={closeDialog}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-======= */}
                     <FiInfo className="mr-3 text-gray-500" />
                     <strong>Description:</strong>
                   </div>
@@ -284,6 +291,7 @@ const BookingTime = () => {
           </div>
         </Dialog>
       )}
+
     </div>
   );
 };

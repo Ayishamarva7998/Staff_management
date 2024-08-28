@@ -23,3 +23,6 @@ export const updatePassword = (Id, passwordData) => api.put(`/password/${Id}`, p
 
 export const getstacks= ()=>api.get('/stacks');
 export const getbatches=()=>api.get('/batches');
+
+
+export const addEventInCalender = (id)=>api.get(`/event/${id}`)
