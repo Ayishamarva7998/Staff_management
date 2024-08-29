@@ -3,7 +3,7 @@ import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import AdvisorDetails from "./AdvisorDetails";
 import { setAdminAuth, viewAdvisors } from "../../../../api/admin_api";
-const rowsPerPage = 6;
+
 
 const Advisor = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,7 +11,7 @@ const Advisor = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [advisors, setAdvisors] = useState([]);
   const [error, setError] = useState(null);
-
+  const [rowsPerPage, setRowsPerPage] = useState(6);
   const nav = useNavigate();
 
   const fetchAdvisors = async () => {
@@ -33,6 +33,21 @@ const Advisor = () => {
       nav("/");
     }
   }, [selectedAdvisor]);
+
+  useEffect(() => {
+ const handleResize = () => {
+  const screenHeight = window.innerHeight;
+  const calculatedRows = Math.max(Math.floor((screenHeight - 300) / 60), 1);
+  setRowsPerPage(calculatedRows);
+};
+
+handleResize();
+window.addEventListener('resize', handleResize);
+
+return () => window.removeEventListener('resize', handleResize);
+   
+  }, []);
+  
 
   const filteredAdvisors = advisors.filter(
     (advisor) =>
@@ -66,6 +81,13 @@ const Advisor = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      {/* totel count  */}
+
+      <p className="text-sm text-gray-900 text-end mb-2">
+      Total Advisors: {advisors.length || 'loading...'}
+       </p>
+
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">

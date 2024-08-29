@@ -144,13 +144,19 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }
                         : selectedReviewer.stack
                       : "Loading...",
                   },  
-                  {
-                    label: "Total Amount",
-                    value: selectedReviewer.totalAmount
-                      ? `${selectedReviewer.totalAmount}`
+                  // {
+                  //   label: "Total Amount",
+                  //   value: selectedReviewer.totalAmount
+                  //     ? `${selectedReviewer.totalAmount}`
+                  //     : "Loading...",
+                  //   isPayment: true,
+                  // },
+                    {
+                    label: "Join Date",
+                    value: selectedReviewer?.created_at
+                      ? new Date(selectedReviewer.created_at).toLocaleDateString()
                       : "Loading...",
-                    isPayment: true,
-                  },                
+                  },               
                 ].map((item, index) => (
                   <div
                     key={index}
@@ -173,6 +179,26 @@ const Reviewerdetails = ({ selectedReviewer, setSelectedReviewer, setShowTable }
                   </div>
                 ))}
               </div>
+
+
+
+
+              <div className="flex justify-between items-center mt-0 border-t border-gray-200 pt-4">
+                <span className="font-medium text-gray-700 text-lg">
+                  Total Amount:
+                </span>
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={handlePaymentClick}
+                    className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-green-600 border border-green-700 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                  >
+                    <FiDollarSign className="mr-1" />
+                    ₹{totalAmount.toLocaleString('en-IN')}
+                  </button>
+                </div>
+              </div>
+
             </div>
 
             <div className="bg-gray-50 p-4 flex  justify-between items-center rounded-b-lg border-t border-gray-300">
