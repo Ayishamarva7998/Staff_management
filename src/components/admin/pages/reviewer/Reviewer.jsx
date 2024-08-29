@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 
 import { setAdminAuth, viewReviewers } from "../../../../api/admin_api";
 import Reviewerdetails from "./ReviewerDetails";
-const rowsPerPage = 6;
+
 
 const Reviewer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [reviewers, setReviewers] = useState([]);
   const [error, setError] = useState(null);
-
+  const [rowsPerPage, setRowsPerPage] = useState(6);
   const [searchTerm, setSearchTerm] = useState("");
 
   const nav = useNavigate();
@@ -61,6 +61,22 @@ const Reviewer = () => {
     }
   }, [selectedReviewer]);
 
+
+  useEffect(() => {
+    // Calculate rows per page based on screen height
+    const handleResize = () => {
+     const screenHeight = window.innerHeight;
+     const calculatedRows = Math.max(Math.floor((screenHeight - 300) / 60), 1);
+     setRowsPerPage(calculatedRows);
+   };
+   
+   handleResize();
+   window.addEventListener('resize', handleResize);
+   
+   return () => window.removeEventListener('resize', handleResize);
+      
+     }, []);
+
   return (
     <div className="container mx-auto p-4 overflow-auto">
       <div className="flex justify-between items-center mb-4">
@@ -72,6 +88,13 @@ const Reviewer = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      {/* totel count  */}
+      <p className="text-sm text-gray-900 text-end mb-2">
+      Total Reviewers: {filteredReviewers.length || 'loading...'}
+       </p>
+
+
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">

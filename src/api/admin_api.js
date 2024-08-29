@@ -41,7 +41,9 @@ export const processPayment = (paymentId, paymentData) => api.post(`/payment/${p
 
 // API call to show all payment history
 
-export const paymentHistory = (id) => api.get(`/paymenhistory/${id}`,);
+export const paymentHistory = (id) => api.get(`/paymenhistory/${id}`);
+
+export const reviewcount =()=>api.get('/count');
 
 // API call to create group meetings
 export const createMeeting = (meetingData) => api.post('/meetings', meetingData);

@@ -66,6 +66,18 @@ const AdvisorDetails = ({ selectedAdvisor, setSelectedAdvisor }) => {
                     {selectedAdvisor?.phone || "Loading..."}
                   </span>
                 </div>
+
+
+
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-700">Join Date:</span>
+                  <span className="text-gray-600">
+                    {selectedAdvisor?.created_at
+                      ? new Date(selectedAdvisor.created_at).toLocaleDateString()
+                      : "Loading..."}
+                  </span>
+                </div>
+
               </div>
             </div>
 
