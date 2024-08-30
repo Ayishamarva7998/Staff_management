@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Field, Form } from "formik";
 import { Dialog, DialogTitle, DialogPanel, DialogBackdrop } from "@headlessui/react";
 import * as Yup from "yup";
@@ -6,6 +6,7 @@ import Select from "react-select";
 import { deletestaff, updatestaff } from "../../../../api/admin_api";
 import toast from "react-hot-toast";
 import { FaTrashAlt } from "react-icons/fa";
+import { getstacks, setcommonToken } from "../../../../api/common_api";
 
 // Validation Schema
 const validationSchema = Yup.object().shape({
@@ -25,26 +26,29 @@ const EditReviwer = ({
   closeEditModal,
   setSelectedReviewer,
 }) => {
-  
-  // Stack options
-   const stackOptions = [
-    { value: "React", label: "React" },
-    { value: "Node", label: "Node" },
-    { value: "Html", label: "Html" },
-    { value: "Css", label: "Css" },
-  ];
-  // Initial values
-  const initialValues = {
-    name: selectedReviewer?.name || "",
-    stack: selectedReviewer?.stack
-      ? selectedReviewer?.stack?.map(stack => stackOptions.find(option => option.value === stack)).filter(Boolean)
-      : [],
-    phone: selectedReviewer?.phone || "",
-    hire: selectedReviewer?.hire || "",
+  const [stackOptions, setStackOptions] = useState([]);
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    stack: [],
+    phone: "",
+    hire: "",
+  });
+
+  const fetchOptions = async () => {
+    setcommonToken();
+    try {
+      const stacksResponse = await getstacks();
+      const formatOptions = (data) =>
+        data.map((item) => ({ label: item, value: item }));
+      setStackOptions(formatOptions(stacksResponse.data));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setStackOptions([]);
+    }
   };
 
   // Handle form submission
-  const handleSubmit = async (values) => {    
+  const handleSubmit = async (values) => {
     try {
       const data = {
         name: values.name,
@@ -77,6 +81,25 @@ const EditReviwer = ({
     }
   };
 
+  useEffect(() => {
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
+    if (selectedReviewer && stackOptions.length > 0) {
+      setInitialValues({
+        name: selectedReviewer?.name || "",
+        stack: selectedReviewer?.stack
+          ? stackOptions.filter(option =>
+              selectedReviewer.stack.includes(option.value)
+            )
+          : [],
+        phone: selectedReviewer?.phone || "",
+        hire: selectedReviewer?.hire || "",
+      });
+    }
+  }, [selectedReviewer, stackOptions]);
+
   return (
     <Dialog open={isEditModalOpen} onClose={closeEditModal} className="relative z-20">
       <DialogBackdrop className="fixed inset-0 bg-gray-600 bg-opacity-50 transition-opacity duration-300 ease-out" />
@@ -92,6 +115,7 @@ const EditReviwer = ({
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
+              enableReinitialize={true} // Ensure Formik reinitializes on new props
             >
               {({ errors, touched, setFieldValue, values }) => (
                 <Form className="space-y-4">
@@ -150,33 +174,6 @@ const EditReviwer = ({
                     </div>
                   </div>
 
-                  {/* <div className="flex flex-col md:flex-row md:space-x-4">
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700">Total Review</label>
-                      <Field
-                        type="number"
-                        name="totalReview"
-                        className={`mt-1 block w-full border ${
-                          errors.totalReview && touched.totalReview ? "border-red-500" : "border-gray-300"
-                        } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 py-2 px-4`}
-                      />
-                      {errors.totalReview && touched.totalReview && <p className="text-red-500 text-sm">{errors.totalReview}</p>}
-                    </div>
-
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700">Total Amount</label>
-                      <Field
-                        type="number"
-                        name="totalAmount"
-                        className={`mt-1 block w-full border ${
-                          errors.totalAmount && touched.totalAmount ? "border-red-500" : "border-gray-300"
-                        } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 py-2 px-4`}
-                      />
-                      {errors.totalAmount && touched.totalAmount && <p className="text-red-500 text-sm">{errors.totalAmount}</p>}
-                    </div>
-                  </div> */}
-
-                  {/* Delete button */}
                   <div className="flex justify-end mb-4">
                     <button
                       type="button"

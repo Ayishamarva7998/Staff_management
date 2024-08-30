@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 const DeleteDialog = ({ isOpen, onClose, onConfirm, item, type }) => {
   const [loading, setLoading] = useState(false);
 
+  
+
   const handleConfirm = async () => {
     setLoading(true);
     try {
@@ -36,7 +38,7 @@ const DeleteDialog = ({ isOpen, onClose, onConfirm, item, type }) => {
           <Dialog.Title className="text-lg font-semibold text-gray-800">
             Confirm Delete
           </Dialog.Title>
-          <p className="mt-2 text-gray-600">Are you sure you want to delete this item?</p>
+          <p className="mt-2 text-gray-600">Are you sure you want to delete this {item}?</p>
           <div className="flex justify-end gap-3 mt-4">
             <button
               type="button"

@@ -6,14 +6,14 @@ const api = axios.create({
 });
 
 // Function to set the authorization token
-export const setAuthToken = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        api.defaults.headers.common['Authorization'] = ` ${token}`;
-    } else {
-        delete api.defaults.headers.common['Authorization'];
-    }
-};
+// export const setAuthToken = () => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//         api.defaults.headers.common['Authorization'] = ` ${token}`;
+//     } else {
+//         delete api.defaults.headers.common['Authorization'];
+//     }
+// };
 
 // API call for login
 export const login = (credentials) => api.post('/login', credentials);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { getIdFromToken } from "../../services/authService";
-import { getDatafromId, setAuthToken, updatePassword } from "../../api/common_api";
+import { getDatafromId, setcommonToken } from "../../api/common_api";
 import { useNavigate } from "react-router-dom";
 import {
   FiUser,
@@ -17,8 +17,9 @@ import { deletebatch, deletestack, setAdminAuth } from "../../api/admin_api";
 import toast from "react-hot-toast";
 import UpdatePasswordModal from "./UpdatePasswordModal";
 import { RingLoader } from "react-spinners";
-import { FaCalendarAlt, FaCheckCircle, FaEnvelope, FaPhone, FaTimesCircle, FaUserTie } from "react-icons/fa";
+import { FaEnvelope, FaPhone, FaTimesCircle, FaUserTie } from "react-icons/fa";
 import { MdAdminPanelSettings } from "react-icons/md";
+import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 
 const Profile = ({ isOpen, closeModal }) => {
   const [data, setData] = useState(null);
@@ -91,7 +92,7 @@ const Profile = ({ isOpen, closeModal }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setAuthToken();
+      setcommonToken();
       fetchProfile();
     } else {
       nav("/");
@@ -253,7 +254,12 @@ const Profile = ({ isOpen, closeModal }) => {
         <FaPhone className="text-gray-600 text-lg" />
         <p className="text-sm font-medium text-gray-700">+{data?.phone || "N/A"}</p>
       </div>
+      <div className="flex items-center space-x-3">
+        <RiMoneyRupeeCircleFill className="text-gray-600 text-lg" />
+        <p className="text-sm font-medium text-gray-700"> {data?.hire || "N/A"}</p>
+      </div>
     </div>
+    
     <div className="mt-6">
       <h3 className="text-xl font-semibold text-gray-900">Stack</h3>
       <ul className=" flex flex-wrap gap-4 pl-0 ">
@@ -265,7 +271,7 @@ const Profile = ({ isOpen, closeModal }) => {
           <li className="text-sm text-gray-500">No stack information available</li>
         )}
       </ul>
-    </div>
+    </div>   
   </div>
 )}
 

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import Select from "react-select";
 import { addStaff, setAdminAuth } from "../../../../api/admin_api";
+import { getbatches, getstacks, setcommonToken } from "../../../../api/common_api";
 
 
 const AddStaff = () => {
@@ -16,6 +17,8 @@ const AddStaff = () => {
   const [selectedStacks, setSelecteStacks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalstack, setIsModalstack] = useState(false);
+  const [batchOptions,setBatchOptions]=useState([]);
+  const [stackOption,setStackOption]=useState([]);
   const initialValues = {
     name: "",
     email: "",
@@ -69,10 +72,7 @@ const AddStaff = () => {
     setLoading(true); 
 
     const finalValues = { ...values, batches: selectedBatches.map(batch => batch.value),stacks:selectedStacks.map(stack => stack.value) };    
-
-
-    console.log(finalValues,'hy im suhab');
-    
+  
     
     try {
       const response = await addStaff(finalValues);           
@@ -88,33 +88,37 @@ const AddStaff = () => {
     }
   };
 
+  const fetchOptions = async () => {
+    setcommonToken();
+    try {
+      const [stacksResponse, batchesResponse] = await Promise.all([
+        getstacks(),
+        getbatches(),
+      ]);
+
+      const formatOptions = data => data.map(item => ({ label: item, value: item }));
+
+      setStackOption(formatOptions(stacksResponse.data));
+      setBatchOptions(formatOptions(batchesResponse.data));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setStackOption([]);
+      setBatchOptions([]);
+    }
+  };
+
+
   const nav = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setAdminAuth();
+      fetchOptions();
     } else {
       nav("/");
     }
   }, [nav]);
 
-
-  const batchOptions = [
-    { value: "1", label: "Batch 1" },
-    { value: "2", label: "Batch 2" },
-    { value: "3", label: "Batch 3" },
-    { value: "4", label: "Batch 4" },
-    { value: "5", label: "Batch 5" },
-    { value: "6", label: "Batch 6" },
-    { value: "7", label: "Batch 7" },
-    { value: "8", label: "Batch 8" }
-  ];
- const stackOption = [
-    { value: "React", label: "React" },
-    { value: "Node", label: "Node" },
-    { value: "Html", label: "Html" },
-    { value: "Css", label: "Css" },
-  ];
 
 
   return (<>
