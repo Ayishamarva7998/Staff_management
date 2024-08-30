@@ -29,6 +29,8 @@ export const viewAdvisors = () => api.get('/advisor');
 
 // API call to view reviewers
 export const viewReviewers = () => api.get('/reviewer');
+// Api view to empolyss
+export const viewEmployees = () => api.get('/employee');
 
 // API call to delete an advisor
 // export const deleteAdvisor = (advisorId) => api.delete(`/advisor/${advisorId}`);

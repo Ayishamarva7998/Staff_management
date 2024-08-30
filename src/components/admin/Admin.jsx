@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { IoMdMail, IoMdPeople } from "react-icons/io";
-import { MdGroups } from "react-icons/md";
+import { MdGroups, MdGroups2 } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
-import { IoPersonAdd } from "react-icons/io5";
+import { IoCodeWorkingSharp, IoGridOutline, IoPersonAdd } from "react-icons/io5";
 import { FaMoneyCheck } from "react-icons/fa";
 import Advisor from "./pages/advisor/Advisors";
 import Reviewer from "./pages/reviewer/Reviewer";
@@ -12,6 +12,7 @@ import Meeting from "./pages/meetings/Meetings";
 import Inbox from "../advisor/pages/Inbox";
 import Header from "../common/Header";
 import Payments from "./pages/payments/payment";
+import Employee from "./pages/Employee/Employee";
 
 
 
@@ -25,6 +26,7 @@ const Admin = () => {
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
     { title: "Advisors", icon: <MdGroups size={iconSize} />, url: "advisors", gap: true },
     { title: "Reviewers", icon: <IoMdPeople size={iconSize} />, url: "reviewers" },
+    { title: "Employees", icon: <MdGroups2 size={iconSize} />, url: "employees" },
     { title: "Payment History", icon: <FaMoneyCheck size={iconSize} />, url: "payments",gap:true },
     { title: "Meetings", icon: <SiGooglemeet size={iconSize} />, url: "meeting", gap: true },
     { title: "Add Staff", icon: <IoPersonAdd size={iconSize} />, url: "add-staff" },
@@ -107,6 +109,8 @@ const Admin = () => {
           <AddStaff />
         ) :rout === 'meeting'? (
           <Meeting/>
+        ): rout=== 'employees' ?(
+          <Employee/>
         ): rout=== 'inbox' ?(
           <Inbox/>
         ):''}

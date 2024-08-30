@@ -49,6 +49,8 @@ const EditReviwer = ({
 
   // Handle form submission
   const handleSubmit = async (values) => {
+
+    console.log(values)
     try {
       const data = {
         name: values.name,
