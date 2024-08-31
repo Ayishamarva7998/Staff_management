@@ -11,7 +11,7 @@ import AddStaff from "./pages/add_staff/Addstaff";
 import Meeting from "./pages/meetings/Meetings";
 import Inbox from "../advisor/pages/Inbox";
 import Header from "../common/Header";
-import Payments from "./pages/payments/payment";
+import Payments from "./pages/payments/Payment";
 import Employee from "./pages/Employee/Employee";
 
 
