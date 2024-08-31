@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { allbookings,setAuthToken, reviewcount } from '../../../api/staff_api';
+import { allbookings,setstaffAuthToken, reviewcount } from '../../../api/staff_api';
 
 const ReviewsTaken = () => {
   const [reviewers, setReviewers] = useState([]);
@@ -8,7 +8,7 @@ const ReviewsTaken = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken(token);
+      setstaffAuthToken(token);
   
     } else {
       navigate('/');
