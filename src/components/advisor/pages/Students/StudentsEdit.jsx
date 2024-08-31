@@ -98,7 +98,7 @@ const StudentsEdit = ({
       closeEditModal();
     }
   };
-
+  
   // Handle delete
   const handleDelete = async () => {
     const advisorId= await getIdFromToken();
