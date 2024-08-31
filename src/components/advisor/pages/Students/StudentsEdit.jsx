@@ -98,7 +98,6 @@ const StudentsEdit = ({
       closeEditModal();
     }
   };
-
   
   // Handle delete
   const handleDelete = async () => {
