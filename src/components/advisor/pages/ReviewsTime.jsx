@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { IoMdPeople } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { bookings, setAuthToken, timeslot } from '../../../api/staff_api';
+import { bookings, setstaffAuthToken, timeslot } from '../../../api/staff_api';
 import { getIdFromToken } from '../../../services/authService';
 
 // Timeslot data
@@ -51,7 +51,7 @@ const ReviewsTime = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken(token);
+      setstaffAuthToken(token);
       fetchTimeslots();
     } else {
       navigate('/');

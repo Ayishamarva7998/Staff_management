@@ -2,11 +2,14 @@ import { useState } from "react";
 import { IoMdMail } from "react-icons/io";
 import { Link, useParams } from "react-router-dom";
 import Header from "../common/Header";
-import { FaBusinessTime } from "react-icons/fa";
+import { FaBusinessTime, FaUserGraduate } from "react-icons/fa";
 import { FaCalendarCheck } from "react-icons/fa";
 import Inbox from "./pages/Inbox";
 import ReviewsTime from "./pages/ReviewsTime";
 import ReviewsTaken from "./pages/ReviewsTaken";
+import Students from "./pages/Students/Students";
+import { FaUserPlus } from "react-icons/fa6";
+import AddStudent from "./pages/add_student/AddStudent";
 
 
 
@@ -16,8 +19,10 @@ const Advisor = () => {
   const { rout } = useParams();
   const Data = [
     { title: "Inbox", icon: <IoMdMail size={iconSize} />, url: "inbox" },
+    { title: "Students", icon: <FaUserGraduate size={iconSize} />, url: "students",gap:true },
     { title: "Review Time", icon: <FaBusinessTime size={iconSize} />, url: "review-time",gap:true },
     { title: "Review Booked", icon: <FaCalendarCheck size={iconSize} />, url: "review-booked",gap:true },
+    { title: "Add New Student", icon: <FaUserPlus size={iconSize} />, url: "add-student", gap: true }, 
   ];
   
 
@@ -95,6 +100,10 @@ const Advisor = () => {
         <ReviewsTime/>
         ) : rout === "review-booked" ? (
           <ReviewsTaken/>
+        ) :rout === 'students'? (
+          <Students/>
+        ) :rout === 'add-student'? (
+          <AddStudent/>
         ) :rout === 'meeting'? (
           <h1>Not found the Page </h1>
         ): rout=== '' ?(

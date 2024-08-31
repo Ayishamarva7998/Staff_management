@@ -4,7 +4,7 @@ import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { FiCalendar, FiClock, FiMail, FiUsers, FiLayers, FiClipboard, FiInfo, FiCheckCircle, FiX } from 'react-icons/fi';
 
-import { getbookings, setAuthToken,acceptBooking} from '../../../api/staff_api';
+import { getbookings, setstaffAuthToken,acceptBooking} from '../../../api/staff_api';
 import { getIdFromToken } from '../../../services/authService';
 import { addEventInCalender, setcommonToken } from '../../../api/common_api';
 
@@ -95,7 +95,7 @@ const addevent = async (Id)=>{
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken(); 
+      setstaffAuthToken(); 
       fetchBookings();
     } else {
       nav('/'); 

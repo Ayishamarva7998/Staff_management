@@ -7,7 +7,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { createtimeslot, deleteTimeslot, getreviewertimeslots, setAuthToken, updatetimeslot } from '../../../api/staff_api';
+import { createtimeslot, deleteTimeslot, getreviewertimeslots, setstaffAuthToken, updatetimeslot } from '../../../api/staff_api';
 import { getIdFromToken } from '../../../services/authService';
 
 
@@ -41,7 +41,7 @@ const ScheduleTime = () => {
   useEffect(() => {
     const token= localStorage.getItem('token');
     if(token){
-      setAuthToken(); 
+      setstaffAuthToken(); 
       fetchtime();
    }else{
      nav('/'); 

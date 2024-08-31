@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 
-export const setAuthToken = () => {
+export const setstaffAuthToken = () => {
     const token = localStorage.getItem('token');
     if (token) {
         api.defaults.headers.common['Authorization'] = ` ${token}`;
@@ -42,5 +42,16 @@ export const reviewcount = (reviewerId)=>api.post(`/reviewcount/${reviewerId}`);
 // for  total reviews in reviewer page
 
 export const totalreviews = (id)=>api.get(`/totalreviews/${id}`);
+
+
+
+
+// student apis 
+
+
+export const addstudent = (id,studentdata)=>api.post(`/student/${id}`,studentdata);
+export const getstudentsbyadvisor = (id)=>api.get(`/student/${id}`);
+export const updatestudentbyadvisor = ( advisorId, studentId ,updatedata)=>api.put(`/student/${advisorId}/${studentId}`,updatedata);
+export const deletestudestudent =(advisorId, studentId )=>api.delete(`/student/${advisorId}/${studentId}`)
 
 export default api;

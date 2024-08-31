@@ -276,10 +276,10 @@ const AddStaff = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   disabled={loading || isSubmitting}
                 >
-                  {loading ? <RingLoader color="#ffffff" size={24} /> : "Add Staff"}
+                  {loading ? <RingLoader color="#ffffff" size={24} /> : "Submit"}
                 </button>
               </Form>
             )}
