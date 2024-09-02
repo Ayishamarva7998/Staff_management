@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an Axios instance with a base URL
 const api = axios.create({
-    baseURL: 'http://localhost:4500/api/staff',
+    baseURL: 'https://staff-management-server.onrender.com/api/staff',
 });
 
 
@@ -29,7 +29,7 @@ export const getreviewertimeslots =(id)=>api.get(`/reviewer/${id}/timeslots`);
 
 //Bookings
 
-export const bookings = (bookingdetails)=>api.post('/booking',bookingdetails);
+export const bookings = (advisorId,studentId,timeslotId,bookingdetails)=>api.post(`/booking/${advisorId}/${studentId}/${timeslotId}`,bookingdetails);
 
 export const getbookings = (id)=> api.get(`/reviewer/${id}/bookings`);
 
