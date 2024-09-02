@@ -189,32 +189,19 @@ const AddStaff = () => {
                 {values.role === "advisor" && (
                   <div className="mb-4">
                     <label htmlFor="batches" className="block text-gray-700 text-sm font-semibold mb-2">Batches</label>
-                    <button type="button" className="text-blue-500" onClick={() => setIsModalOpen(true)}>Add Batch</button>
                     <div className="mt-2">
                       {selectedBatches.map(batch => (
                         <span key={batch.value} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full mr-2 mb-2">{batch.label}</span>
                       ))}
                     </div>
-                    <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed inset-0 z-10 overflow-y-auto">
-                      <div className="flex items-center justify-center min-h-screen p-4">
-                        <Dialog.Panel className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-                          <Dialog.Title className="text-lg font-bold mb-4">Select Batches</Dialog.Title>
-                          <Select
+                    <Select
                             isMulti
                             options={batchOptions}
                             onChange={setSelectedBatches}
                             value={selectedBatches}
+                            placeholder="Select batches..."
+                            name="batches"
                           />
-                          <button
-                            type="button"
-                            className="mt-4 inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-                            onClick={() => setIsModalOpen(false)}
-                          >
-                            Close
-                          </button>
-                        </Dialog.Panel>
-                      </div>
-                    </Dialog>
                     <ErrorMessage name="batches" component="div" className="text-red-500 text-xs mt-2" />
                   </div>
                 )}
@@ -223,32 +210,19 @@ const AddStaff = () => {
                 {values.role === "reviewer" && (
                   <div className="mb-4">
                     <label htmlFor="stacks" className="block text-gray-700 text-sm font-semibold mb-2">Stacks</label>
-                    <button type="button" className="text-blue-500" onClick={() => setIsModalstack(true)}>Add Stack</button>
                     <div className="mt-2">
                       {selectedStacks.map(stack => (
                         <span key={stack.value} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full mr-2 mb-2">{stack.label}</span>
                       ))}
                     </div>
-                    <Dialog open={isModalstack} onClose={() => setIsModalstack(false)} className="fixed inset-0 z-10 overflow-y-auto">
-                      <div className="flex items-center justify-center min-h-screen p-4">
-                        <Dialog.Panel className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-                          <Dialog.Title className="text-lg font-bold mb-4">Select Stacks</Dialog.Title>
-                          <Select
+                    <Select
                             isMulti
                             options={stackOptions}
                             onChange={setSelectedStacks}
                             value={selectedStacks}
+                            placeholder="Select stacks..."
+                            name="stacks"
                           />
-                          <button
-                            type="button"
-                            className="mt-4 inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-                            onClick={() => setIsModalstack(false)}
-                          >
-                            Close
-                          </button>
-                        </Dialog.Panel>
-                      </div>
-                    </Dialog>
                     <ErrorMessage name="stacks" component="div" className="text-red-500 text-xs mt-2" />
                   </div>
                 )}
