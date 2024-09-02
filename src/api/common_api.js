@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-    baseURL: 'http://localhost:4500/api/common',
+    baseURL: 'https://staff-management-server.onrender.com/api/common',
 });
 
 
